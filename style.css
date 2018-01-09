@@ -49,25 +49,10 @@ h1 {
   margin-left: 20px;
 }
 
-.score {
-  color: #aaa;
-  width: 50px;
-  padding: 10px;
-  border-right-width: 0px;
-}
-
 .postText {
   width: 500px;
   border-left-width: 0px;
   border-right-width: 0px;
-}
-
-.age {
-  color: #aaa;
-  width: 100px;
-  padding: 10px;
-  border-left-width: 0px;
-  text-align: right;
 }
 
 .table {
@@ -101,6 +86,6 @@ a:hover { transform:translateY(-3px); box-shadow:0 6px 0 rgba(0,0,0,0.1), inset 
 
 a:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,0.1), inset 0 0 5px rgba(255,255,255,0.4); border-bottom-width:2px; transition:0.1s ease; }
 
-.upvoteButton { background:hsl(104,51%,62%); } /* green */
+.createButton { background:hsl(104,51%,62%); } /* green */
 .deleteButton { background:hsl(8,59%,59%); } /* red */
 .disabledButton { background:hsl(8,5%,89%); }

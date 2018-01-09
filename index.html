@@ -16,9 +16,119 @@
   firebase.initializeApp(config);
   // Initialize Cloud Firestore through Firebase
   var db = firebase.firestore();
-  var BOOK_COLLECTION = "Books";
-  var allPosts = [];
+  var USER_COLLECTION = "users";
+  var allUsers = [];
 
+  function readPosts() {
+    var postList = document.querySelector("#postList");
+    postList.innerHTML = "";
+    allUsers.forEach(function(post) {
+      postList.appendChild(makePostHtml(post));     
+    });
+  }
+    
+  function createPost() {
+      var text = document.getElementById("input").value;
+      if (!text) {
+          return;
+      }
+      db.collection(USER_COLLECTION).doc(text).set({
+          username: text
+      })
+      .then(function(docRef) {
+          console.log("user written");
+      })
+  }
+  function makePostHtml(post) {
+    var username = document.createElement("td");
+    score.className = "username";
+      
+//    var age = document.createElement("td");
+//    age.className = "age";
+//    age.innerHTML = timeDifference(post.date);
+      
+    var row = document.createElement('tr');
+    row.appendChild(username);
+      
+    var table = document.createElement('table');
+    table.className = "table";
+    if (post.text === selectedPostText) {
+      table.classList.add("select");
+    } else {
+      table.classList.remove("select");
+    }
+  table.appendChild(row);
+    table.onclick = function() {
+      document.getElementById("input").value = post.text;
+      onTextChanged();
+      selectedPostText = post.text;
+      readPosts();
+    };
+    return table;
+  }
+    
+
+  function disableButtons() {
+    document.getElementById("createButton").className = "disabledButton";
+    document.getElementById("deleteButton").className = "disabledButton";
+  }
+  function enableButtons() {
+    document.getElementById("createButton").className = "createButton";
+    document.getElementById("deleteButton").className = "deleteButton";
+  }
+
+  function onTextChanged() {
+    selectedPostText = document.getElementById("input").value;
+    if (selectedPostText) {
+      enableButtons();
+    } else {
+      disableButtons();
+    }
+    readPosts();
+  }
+
+  function addedPost(post) {
+    var newPost = {}
+    newPost['username'] = post.text;
+    allUsers.push(newPost);
+    readPosts();
+  }
+  function changedPost(newPost) {
+    allUsers.forEach(function(oldPost) {
+      if (oldPost.text === newPost.text) {
+
+      }
+    });
+    readPosts();
+  }
+  function removedPost(removedPost) {
+    var updatedList = [];
+    allUsers.forEach(function(post) {
+      if (post.text === removedPost.text) {
+      } else {
+        updatedList.push(post);
+      }
+    });
+    allUsers = updatedList;
+    readPosts();
+  }
+    
+  function listenForChanges() {
+  db.collection(COLLECTION).orderBy("username").onSnapshot(function(querySnapshot) {
+      querySnapshot.docChanges.forEach(function(change) {
+        console.log("change in ", change.type + " " + change.doc.data().text);
+        if (change.type === "added") {
+          addedPost(change.doc.data());
+        }
+        if (change.type === "modified") {
+          changedPost(change.doc.data());
+        }
+        if (change.type === "removed") {
+          removedPost(change.doc.data());
+        }
+      });
+    });
+  }
 </script>
 </head>
 
@@ -29,7 +139,7 @@
 
   <div>
     <input type="text" id="input" oninput="onTextChanged()" value="" size="30" maxlength="80">
-    <a id="upvoteButton" class="upvoteButton" onclick="upvotePost()">Create</a>
+    <a id="createButton" class="createButton" onclick="createButton()">Create</a>
     <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
   </div>
   <button onclick="readPosts()">Refresh</button>
