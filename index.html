@@ -1,0 +1,46 @@
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAimFk0NTla6Gp4PkyZ47qnol8co8PTsKI",
+    authDomain: "library-d7f65.firebaseapp.com",
+    databaseURL: "https://library-d7f65.firebaseio.com",
+    projectId: "library-d7f65",
+    storageBucket: "library-d7f65.appspot.com",
+    messagingSenderId: "634700996570"
+  };
+  firebase.initializeApp(config);
+  // Initialize Cloud Firestore through Firebase
+  var db = firebase.firestore();
+  var BOOK_COLLECTION = "Books";
+  var allPosts = [];
+
+</script>
+</head>
+
+<body>
+  <div>
+    <span id="logo">Leaderboard</span>
+  </div>
+
+  <div>
+    <input type="text" id="input" oninput="onTextChanged()" value="" size="30" maxlength="80">
+    <a id="upvoteButton" class="upvoteButton" onclick="upvotePost()">Upvote</a>
+    <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
+  </div>
+  <button onclick="readPosts()">Refresh</button>
+
+  <div id="postList"/>
+
+<script>
+  disableButtons();
+  readPosts();
+</script>
+
+</body>
+
+</html>
