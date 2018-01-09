@@ -27,7 +27,7 @@ input {
 }
 
 #logo:after {
-  content:"leaderboard";
+  content:"library";
   position: absolute;
   left: 6px;
   top: 20;

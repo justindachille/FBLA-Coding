@@ -24,12 +24,12 @@
 
 <body>
   <div>
-    <span id="logo">Leaderboard</span>
+    <span id="logo">Library</span>
   </div>
 
   <div>
     <input type="text" id="input" oninput="onTextChanged()" value="" size="30" maxlength="80">
-    <a id="upvoteButton" class="upvoteButton" onclick="upvotePost()">Upvote</a>
+    <a id="upvoteButton" class="upvoteButton" onclick="upvotePost()">Create</a>
     <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
   </div>
   <button onclick="readPosts()">Refresh</button>
@@ -37,8 +37,7 @@
   <div id="postList"/>
 
 <script>
-  disableButtons();
-  readPosts();
+
 </script>
 
 </body>
