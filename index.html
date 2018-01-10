@@ -2,7 +2,8 @@
 
 <head>
 <link rel="stylesheet" type="text/css" href="style.css">
-<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
 <script>
   // Initialize Firebase
   var config = {
@@ -20,28 +21,31 @@
   var allUsers = [];
 
   function readPosts() {
+    console.log("readPosts");
     var postList = document.querySelector("#postList");
     postList.innerHTML = "";
     allUsers.forEach(function(post) {
+      console.log(post.username);
       postList.appendChild(makePostHtml(post));     
     });
   }
     
   function createPost() {
       var text = document.getElementById("input").value;
-      if (!text) {
-          return;
-      }
       db.collection(USER_COLLECTION).doc(text).set({
           username: text
       })
       .then(function(docRef) {
           console.log("user written");
-      })
+      });
+      readPosts();
+  
   }
   function makePostHtml(post) {
     var username = document.createElement("td");
-    score.className = "username";
+    username.className = "username";
+    username.innerHTML = post.username;
+    console.log(post.username);
       
 //    var age = document.createElement("td");
 //    age.className = "age";
@@ -52,19 +56,19 @@
       
     var table = document.createElement('table');
     table.className = "table";
-    if (post.text === selectedPostText) {
-      table.classList.add("select");
-    } else {
-      table.classList.remove("select");
-    }
+//    if (post.text === selectedPostText) {
+//      table.classList.add("select");
+//    } else {
+//      table.classList.remove("select");
+//    }
   table.appendChild(row);
-    table.onclick = function() {
-      document.getElementById("input").value = post.text;
-      onTextChanged();
-      selectedPostText = post.text;
-      readPosts();
-    };
-    return table;
+//    table.onclick = function() {
+//      document.getElementById("input").value = post.text;
+//      onTextChanged();
+//      selectedPostText = post.text;
+//      readPosts();
+//    };
+//    return table;
   }
     
 
@@ -88,16 +92,17 @@
   }
 
   function addedPost(post) {
-    var newPost = {}
-    newPost['username'] = post.text;
-    allUsers.push(newPost);
+    var newUser = {}
+    newPost['username'] = post.username;
+    allUsers.push(newUser);
     readPosts();
   }
-  function changedPost(newPost) {
-    allUsers.forEach(function(oldPost) {
-      if (oldPost.text === newPost.text) {
 
-      }
+  function changedPost(newPost) {
+    allusers.forEach(function(oldUser) {
+        if (oldUser.text == newPost.text) {
+            oldUser.username = newPost.username;
+        }
     });
     readPosts();
   }
@@ -114,7 +119,7 @@
   }
     
   function listenForChanges() {
-  db.collection(COLLECTION).orderBy("username").onSnapshot(function(querySnapshot) {
+  db.collection(USER_COLLECTION).onSnapshot(function(querySnapshot) {
       querySnapshot.docChanges.forEach(function(change) {
         console.log("change in ", change.type + " " + change.doc.data().text);
         if (change.type === "added") {
@@ -139,7 +144,7 @@
 
   <div>
     <input type="text" id="input" oninput="onTextChanged()" value="" size="30" maxlength="80">
-    <a id="createButton" class="createButton" onclick="createButton()">Create</a>
+    <a id="createButton" class="createButton" onclick="createPost()">Create</a>
     <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
   </div>
   <button onclick="readPosts()">Refresh</button>
