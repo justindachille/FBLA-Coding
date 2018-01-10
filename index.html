@@ -21,12 +21,13 @@
   var allUsers = [];
 
   function readPosts() {
-    console.log("readPosts");
-    var postList = document.querySelector("#postList");
-    postList.innerHTML = "";
-    allUsers.forEach(function(post) {
-      console.log(post.username);
-      postList.appendChild(makePostHtml(post));     
+    db.collection(USER_COLLECTION).get().then((querySnapshot) => {
+        var postList = document.querySelector("#postList");
+        postList.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+            post = doc.data();
+            postList.appendChild(makePostHtml(post));
+        });
     });
   }
     
@@ -62,13 +63,13 @@
 //      table.classList.remove("select");
 //    }
   table.appendChild(row);
-//    table.onclick = function() {
-//      document.getElementById("input").value = post.text;
-//      onTextChanged();
-//      selectedPostText = post.text;
-//      readPosts();
-//    };
-//    return table;
+    table.onclick = function() {
+      document.getElementById("input").value = post.text;
+      onTextChanged();
+      selectedPostText = post.text;
+      readPosts();
+    };
+    return table;
   }
     
 
@@ -134,6 +135,20 @@
       });
     });
   }
+    
+  function openTab(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
 </script>
 </head>
 
@@ -142,13 +157,24 @@
     <span id="logo">Library</span>
   </div>
 
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Users')" id="defaultOpen">Users</button>
+    <button class="tablinks" onclick="openTab(event, 'Books')">Books</button>
+  </div>    
+
   <div>
     <input type="text" id="input" oninput="onTextChanged()" value="" size="30" maxlength="80">
     <a id="createButton" class="createButton" onclick="createPost()">Create</a>
     <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
   </div>
   <button onclick="readPosts()">Refresh</button>
+  <div id="Users" class="tabcontent">
+    
+  </div>    
 
+  <div id="Books" class="tabcontent">
+    
+  </div>
   <div id="postList"/>
 
 <script>
