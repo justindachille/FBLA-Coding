@@ -18,20 +18,31 @@
   // Initialize Cloud Firestore through Firebase
   var db = firebase.firestore();
   var USER_COLLECTION = "users";
-  var allUsers = [];
+  var BOOK_COLLECTION = "books";
 
-  function readPosts() {
+  function readUsers() {
     db.collection(USER_COLLECTION).get().then((querySnapshot) => {
-        var postList = document.querySelector("#postList");
-        postList.innerHTML = "";
+        var userList = document.querySelector("#userList");
+        userList.innerHTML = "";
         querySnapshot.forEach((doc) => {
-            post = doc.data();
-            postList.appendChild(makePostHtml(post));
+            user = doc.data();
+            userList.appendChild(makeUserHtml(user));
         });
     });
   }
     
-  function createPost() {
+  function readBooks() {
+    db.collection(BOOK_COLLECTION).get().then((querySnapshot) => {
+        var bookList = document.querySelector("#bookList");
+        bookList.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+            book = doc.data();
+            bookList.appendChild(makeBookHtml(book));
+        });
+    });
+  }
+    
+  function createUser() {
       var text = document.getElementById("input").value;
       db.collection(USER_COLLECTION).doc(text).set({
           username: text
@@ -42,7 +53,7 @@
       readPosts();
   
   }
-  function makePostHtml(post) {
+  function makeUserHtml(post) {
     var username = document.createElement("td");
     username.className = "username";
     username.innerHTML = post.username;
@@ -64,14 +75,38 @@
 //    }
   table.appendChild(row);
     table.onclick = function() {
-      document.getElementById("input").value = post.text;
+      document.getElementById("input").value = post.username;
       onTextChanged();
-      selectedPostText = post.text;
+      selectedPostText = post.username;
       readPosts();
     };
     return table;
   }
     
+  function makeBookHtml(book) {
+    var title = document.createElement("td");
+    title.className = "username";
+    title.innerHTML = book.title;
+    console.log(book.title);
+      
+    var author = document.createElement("td");
+    author.className = "author";
+    author.innerHTML = book.author;
+      
+    var row = document.createElement('tr');
+    row.appendChild(title);
+    row.appendChild(author);
+      
+    var table = document.createElement('table');
+    table.className = "table";
+//    if (post.text === selectedPostText) {
+//      table.classList.add("select");
+//    } else {
+//      table.classList.remove("select");
+//    }
+    table.appendChild(row);
+    return table;
+  }
 
   function disableButtons() {
     document.getElementById("createButton").className = "disabledButton";
@@ -136,19 +171,19 @@
     });
   }
     
-  function openTab(evt, cityName) {
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
+  function openTab(evt, tabName) {
+    var tabcontent = document.getElementsByClassName("tabcontent");
+    for (var i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
     }
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
+    var tablinks = document.getElementsByClassName("tablinks");
+    for (var i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(cityName).style.display = "block";
+    document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
+  document.getElementById("defaultOpen").click();
 </script>
 </head>
 
@@ -163,24 +198,44 @@
   </div>    
 
   <div>
-    <input type="text" id="input" oninput="onTextChanged()" value="" size="30" maxlength="80">
-    <a id="createButton" class="createButton" onclick="createPost()">Create</a>
-    <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
+
   </div>
-  <button onclick="readPosts()">Refresh</button>
   <div id="Users" class="tabcontent">
-    
+      
+    <a id="createButton" class="createButton" onclick="createUser()">Create</a>
+    <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
+    <div><input type="text" id="firstName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
+    <div><input type="text" id="lastName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
+    <button onclick="readUsers()">Refresh</button>
+    <div id="userList"> </div>
+      
   </div>    
 
   <div id="Books" class="tabcontent">
-    
+    <button onclick="readBooks()">Refresh</button>
+    <div id="bookList"> </div>
   </div>
-  <div id="postList"/>
-
-<script>
-
-</script>
 
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
