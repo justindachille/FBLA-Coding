@@ -43,28 +43,28 @@
   }
     
   function createUser() {
-      var text = document.getElementById("input").value;
-      db.collection(USER_COLLECTION).doc(text).set({
-          username: text
+      var firstNameText = capitalizeFirstLetter(document.getElementById("firstName").value);
+      var lastNameText = capitalizeFirstLetter(document.getElementById("lastName").value);
+      console.log(lastNameText);
+      db.collection(USER_COLLECTION).doc(firstNameText).set({
+          firstName: firstNameText,
+          lastName: lastNameText
       })
       .then(function(docRef) {
           console.log("user written");
       });
-      readPosts();
+      readUsers();
   
   }
-  function makeUserHtml(post) {
-    var username = document.createElement("td");
-    username.className = "username";
-    username.innerHTML = post.username;
-    console.log(post.username);
-      
-//    var age = document.createElement("td");
-//    age.className = "age";
-//    age.innerHTML = timeDifference(post.date);
+  function makeUserHtml(user) {
+    var name = document.createElement("td");
+    name.className = "name";
+    name.innerHTML = user.firstName 
+        + " " 
+        + user.lastName;
       
     var row = document.createElement('tr');
-    row.appendChild(username);
+    row.appendChild(name);
       
     var table = document.createElement('table');
     table.className = "table";
@@ -75,9 +75,9 @@
 //    }
   table.appendChild(row);
     table.onclick = function() {
-      document.getElementById("input").value = post.username;
+      document.getElementById("input").value = user.firstName;
       onTextChanged();
-      selectedPostText = post.username;
+      selectedPostText = user.username;
       readPosts();
     };
     return table;
@@ -142,6 +142,7 @@
     });
     readPosts();
   }
+    
   function removedPost(removedPost) {
     var updatedList = [];
     allUsers.forEach(function(post) {
@@ -152,6 +153,10 @@
     });
     allUsers = updatedList;
     readPosts();
+  }
+    
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
     
   function listenForChanges() {
@@ -193,7 +198,7 @@
   </div>
 
   <div class="tab">
-    <button class="tablinks" onclick="openTab(event, 'Users')" id="defaultOpen">Users</button>
+    <button class="tablinks" onclick="openTab(event, 'Users');readUsers()" id="defaultOpen">Users</button>
     <button class="tablinks" onclick="openTab(event, 'Books')">Books</button>
   </div>    
 
@@ -209,7 +214,7 @@
     <button onclick="readUsers()">Refresh</button>
     <div id="userList"> </div>
       
-  </div>    
+  </div>  
 
   <div id="Books" class="tabcontent">
     <button onclick="readBooks()">Refresh</button>
