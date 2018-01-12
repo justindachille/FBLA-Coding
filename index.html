@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
+<script src="user.js"></script>
 <script>
   // Initialize Firebase
   var config = {
@@ -54,15 +55,13 @@
           console.log("user written");
       });
       readUsers();
-  
   }
   function makeUserHtml(user) {
+    console.log(user.firstName);
+    var newUser = new User(user.firstName, user.lastName, user.id);
     var name = document.createElement("td");
     name.className = "name";
-    name.innerHTML = user.firstName 
-        + " " 
-        + user.lastName;
-      
+    name.innerHTML = newUser.fullName;
     var row = document.createElement('tr');
     row.appendChild(name);
       
@@ -82,7 +81,7 @@
     };
     return table;
   }
-    
+
   function makeBookHtml(book) {
     var title = document.createElement("td");
     title.className = "username";
@@ -96,7 +95,7 @@
     var row = document.createElement('tr');
     row.appendChild(title);
     row.appendChild(author);
-      
+
     var table = document.createElement('table');
     table.className = "table";
 //    if (post.text === selectedPostText) {
@@ -220,7 +219,10 @@
     <button onclick="readBooks()">Refresh</button>
     <div id="bookList"> </div>
   </div>
-
+    
+    <script>
+    document.getElementById("defaultOpen").click();
+    </script>
 </body>
 
 </html>
