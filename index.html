@@ -56,11 +56,12 @@
       });
       readUsers();
   }
+    
   function makeUserHtml(user) {
-    console.log(user.firstName);
     var newUser = new User(user.firstName, user.lastName, user.id);
     var name = document.createElement("td");
     name.className = "name";
+    console.log(newUser.fullName);
     name.innerHTML = newUser.fullName;
     var row = document.createElement('tr');
     row.appendChild(name);

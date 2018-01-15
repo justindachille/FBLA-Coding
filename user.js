@@ -1,7 +1,7 @@
 class User {
-    constructor(firstName, lastName, id) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    constructor (firstName, lastName, id) {
+        this.firstName = firstName.value;
+        this.lastName = lastName.value;
         this._id = id;
     }
     
@@ -9,10 +9,12 @@ class User {
         return this.generateFullName();
     }
     
-    this.generateFullName = function () {
-        if(firstName && lastName) {
-            return firstName + " " + lastName;
-        }        
+    generateFullName () {
+        if (firstName && lastName) {
+            console.log ("generateFullName: " + String(firstName) + " " + String(lastName));
+            return String(firstName) + " " + String(lastName);
+        }
+        return "No name";
     }
     
 }
