@@ -20,6 +20,7 @@
   var db = firebase.firestore();
   var USER_COLLECTION = "users";
   var BOOK_COLLECTION = "books";
+	var selectedUserText = "";
 
   function readUsers() {
     db.collection(USER_COLLECTION).get().then((querySnapshot) => {
@@ -58,26 +59,26 @@
   }
     
   function makeUserHtml(user) {
+    console.log(user.firstName)
     var newUser = new User(user.firstName, user.lastName, user.id);
     var name = document.createElement("td");
     name.className = "name";
-    console.log(newUser.fullName);
     name.innerHTML = newUser.fullName;
     var row = document.createElement('tr');
     row.appendChild(name);
       
     var table = document.createElement('table');
     table.className = "table";
-//    if (post.text === selectedPostText) {
-//      table.classList.add("select");
-//    } else {
-//      table.classList.remove("select");
-//    }
+    if (newUser.text === selectedUserText) {
+      table.classList.add("select");
+    } else {
+      table.classList.remove("select");
+    }
   table.appendChild(row);
     table.onclick = function() {
-      document.getElementById("input").value = user.firstName;
+      document.getElementById("selection").value = newUser.fullName;
       onTextChanged();
-      selectedPostText = user.username;
+      selectedPostText = newUser.fullName;
       readPosts();
     };
     return table;
@@ -118,13 +119,13 @@
   }
 
   function onTextChanged() {
-    selectedPostText = document.getElementById("input").value;
-    if (selectedPostText) {
+    selectedUserText = document.getElementById("firstName").value;
+    if (selectedUserText) {
       enableButtons();
     } else {
       disableButtons();
     }
-    readPosts();
+    readUsers();
   }
 
   function addedPost(post) {
@@ -201,6 +202,11 @@
     <button class="tablinks" onclick="openTab(event, 'Users');readUsers()" id="defaultOpen">Users</button>
     <button class="tablinks" onclick="openTab(event, 'Books')">Books</button>
   </div>    
+    
+  <div id="selectorBox">
+  	<h2>Selection</h2>
+		<div id="selection"></div>
+  </div>
 
   <div>
 

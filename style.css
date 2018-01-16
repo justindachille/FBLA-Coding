@@ -44,9 +44,22 @@ input {
   text-shadow: none;
 }
 
+#selectorBox {
+  float: right;
+  border: 5px solid green;
+  margin: 25px;
+	padding: 25px;
+}
+
+
 h1 {
   color: navy;
   margin-left: 20px;
+}
+
+h2 {
+	color: gray;
+	text-align: center;
 }
 
 .username {
