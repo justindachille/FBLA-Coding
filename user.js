@@ -11,7 +11,6 @@ class User {
     
     generateFullName () {
         if (firstName && lastName) {
-            console.log ("generateFullName: " + String(firstName) + " " + String(lastName));
             return String(this.firstName) + " " + String(this.lastName);
         }
         return "No name";

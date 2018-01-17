@@ -59,7 +59,6 @@
   }
     
   function makeUserHtml(user) {
-    console.log(user.firstName)
     var newUser = new User(user.firstName, user.lastName, user.id);
     var name = document.createElement("td");
     name.className = "name";
@@ -69,17 +68,16 @@
       
     var table = document.createElement('table');
     table.className = "table";
-    if (newUser.text === selectedUserText) {
-      table.classList.add("select");
-    } else {
-      table.classList.remove("select");
+    if (newUser.fullName === selectedUserText) {
+      table.className = "tableSelected";
     }
   table.appendChild(row);
     table.onclick = function() {
-      document.getElementById("selection").value = newUser.fullName;
+      document.getElementById("selection").innerHTML = newUser.fullName;
       onTextChanged();
-      selectedPostText = newUser.fullName;
-      readPosts();
+      selectedUserText = newUser.fullName;
+      console.log(selectedUserText);
+      readUsers();
     };
     return table;
   }
@@ -119,7 +117,6 @@
   }
 
   function onTextChanged() {
-    selectedUserText = document.getElementById("firstName").value;
     if (selectedUserText) {
       enableButtons();
     } else {

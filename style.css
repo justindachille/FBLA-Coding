@@ -84,15 +84,6 @@ h2 {
   margin: 5px;
 }
 
-.table.select {
-    from {
-      background: white
-    }
-    to {
-      background: light blue;
-    }
-}
-
 /* Change background color of buttons on hover */
 .tab button:hover {
     background-color: #ddd;
