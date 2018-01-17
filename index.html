@@ -29,6 +29,7 @@
         querySnapshot.forEach((doc) => {
             user = doc.data();
             userList.appendChild(makeUserHtml(user));
+            
         });
     });
   }
@@ -42,6 +43,14 @@
             bookList.appendChild(makeBookHtml(book));
         });
     });
+  }
+  
+  function selectUser(user) {
+    var newUser = new User(user.firstName, user.lastName, user.id);
+    document.getElementById("selectionName").innerHTML
+      = "Name: " + newUser.fullName;
+    document.getElementById("selectionId").innerHTML 
+      = "Id: " + user.doc().id;
   }
     
   function createUser() {
@@ -73,9 +82,9 @@
     }
   table.appendChild(row);
     table.onclick = function() {
-      document.getElementById("selection").innerHTML = newUser.fullName;
-      onTextChanged();
+      selectUser(user);
       selectedUserText = newUser.fullName;
+      onTextChanged();
       console.log(selectedUserText);
       readUsers();
     };
@@ -202,7 +211,8 @@
     
   <div id="selectorBox">
   	<h2>Selection</h2>
-		<div id="selection"></div>
+		<div id="selectionName"></div>
+    <div id="selectionId"></div>
   </div>
 
   <div>
