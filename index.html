@@ -20,16 +20,43 @@
   var db = firebase.firestore();
   var USER_COLLECTION = "users";
   var BOOK_COLLECTION = "books";
-	var selectedUserText = "";
+	var selectedUserId = "";
 
+	window.addEventListener("DOMContentLoaded", function() {
+		var form = document.getElementById("editForm");
+		
+		document.getElementById("editButton").addEventListener("click", function () {
+			var newFirstName = document.getElementById("selectionFirstName").value;
+			var newLastName = document.getElementById("selectionLastName").value;
+  		var userDocRef = db.collection(USER_COLLECTION).doc(selectedUserId);
+			console.log("Id: " + selectedUserId);
+			return db.runTransaction(function(transaction) {
+				return transaction.get(userDocRef).then(function(userDoc) {
+					var user = userDoc.data();
+					transaction.update(
+						userDocRef,
+						{
+							firstName: newFirstName,
+							lastName: newLastName
+						});
+					return newFirstName;
+				});
+			}).then(function() {
+				console.log("Transaction successfully committed!");
+			}).catch(function(error) {
+				console.log("Transaction failed: ", error);
+			})
+		});
+	});
+	
   function readUsers() {
     db.collection(USER_COLLECTION).get().then((querySnapshot) => {
         var userList = document.querySelector("#userList");
         userList.innerHTML = "";
         querySnapshot.forEach((doc) => {
             user = doc.data();
-            userList.appendChild(makeUserHtml(user));
-            
+					  var newUser = new User(user.firstName, user.lastName, doc.id);
+            userList.appendChild(makeUserHtml(newUser));
         });
     });
   }
@@ -46,18 +73,17 @@
   }
   
   function selectUser(user) {
-    var newUser = new User(user.firstName, user.lastName, user.id);
-    document.getElementById("selectionName").innerHTML
-      = "Name: " + newUser.fullName;
-    document.getElementById("selectionId").innerHTML 
-      = "Id: " + user.doc().id;
+    document.getElementById("selectionFirstName").value = user.firstName;
+		console.log(user.lastName);
+    document.getElementById("selectionLastName").value = user.lastName;
+		document.getElementById("selectionId").innerHTML = "Id: " + user.id;
   }
     
   function createUser() {
       var firstNameText = capitalizeFirstLetter(document.getElementById("firstName").value);
       var lastNameText = capitalizeFirstLetter(document.getElementById("lastName").value);
       console.log(lastNameText);
-      db.collection(USER_COLLECTION).doc(firstNameText).set({
+      db.collection(USER_COLLECTION).doc().set({
           firstName: firstNameText,
           lastName: lastNameText
       })
@@ -68,24 +94,24 @@
   }
     
   function makeUserHtml(user) {
-    var newUser = new User(user.firstName, user.lastName, user.id);
+		console.log(user.fullName);
     var name = document.createElement("td");
     name.className = "name";
-    name.innerHTML = newUser.fullName;
+    name.innerHTML = user.fullName;
     var row = document.createElement('tr');
     row.appendChild(name);
       
     var table = document.createElement('table');
     table.className = "table";
-    if (newUser.fullName === selectedUserText) {
+    if (user.fullName === selectedUserId) {
       table.className = "tableSelected";
     }
   table.appendChild(row);
     table.onclick = function() {
       selectUser(user);
-      selectedUserText = newUser.fullName;
+      selectedUserId = user.fullName;
       onTextChanged();
-      console.log(selectedUserText);
+      console.log(selectedUserId);
       readUsers();
     };
     return table;
@@ -126,7 +152,7 @@
   }
 
   function onTextChanged() {
-    if (selectedUserText) {
+    if (selectedUserId) {
       enableButtons();
     } else {
       disableButtons();
@@ -211,8 +237,12 @@
     
   <div id="selectorBox">
   	<h2>Selection</h2>
-		<div id="selectionName"></div>
+    <form id="editForm" onsubmit="return false">
+    First name: <input type="text" id="selectionFirstName"> <br>
+    Last name: <input type="text" id="selectionLastName"> <br>
     <div id="selectionId"></div>
+    <button id="editButton">Edit</button>
+		</form>
   </div>
 
   <div>

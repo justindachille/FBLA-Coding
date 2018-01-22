@@ -114,8 +114,10 @@ h2 {
     float: left;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
+		margin-top: 20px;
+		margin-right: 20px;
     width: 30%;
-    height: 300px;
+    min-height: 100%;
 }
 
 a { font-size:1.1em; padding:5px 10px; display:inline-block; margin:5px; border-radius:6px; border:solid rgba(0,0,0,0.2); border-width:1px 1px 5px; box-shadow:0 5px 0 rgba(0,0,0,0.1), inset 0 0 3px rgba(255,255,255,0.3); cursor:pointer; user-select:none; transition:0.4s ease; }
