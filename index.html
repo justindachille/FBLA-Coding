@@ -32,7 +32,13 @@
 			console.log("Id: " + selectedUserId);
 			return db.runTransaction(function(transaction) {
 				return transaction.get(userDocRef).then(function(userDoc) {
-					var user = userDoc.data();
+					if (!userDoc) {
+            throw "Document does not exist!"
+          }
+          if (!doc.exists) {
+            throw "Document does not exist!"
+          }
+//          var user = userDoc.data();
 					transaction.update(
 						userDocRef,
 						{
