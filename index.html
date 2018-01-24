@@ -35,7 +35,7 @@
 					if (!userDoc) {
             throw "Document does not exist!"
           }
-          if (!doc.exists) {
+          if (!userDoc.exists) {
             throw "Document does not exist!"
           }
 //          var user = userDoc.data();
@@ -109,13 +109,13 @@
       
     var table = document.createElement('table');
     table.className = "table";
-    if (user.fullName === selectedUserId) {
+    if (user.id === selectedUserId) {
       table.className = "tableSelected";
     }
   table.appendChild(row);
     table.onclick = function() {
       selectUser(user);
-      selectedUserId = user.fullName;
+      selectedUserId = user.id;
       onTextChanged();
       console.log(selectedUserId);
       readUsers();
