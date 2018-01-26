@@ -240,22 +240,17 @@
     <button class="tablinks" onclick="openTab(event, 'Users');readUsers()" id="defaultOpen">Users</button>
     <button class="tablinks" onclick="openTab(event, 'Books')">Books</button>
   </div>    
-    
-  <div id="selectorBox">
-  	<h2>Selection</h2>
-    <form id="editForm" onsubmit="return false">
-    First name: <input type="text" id="selectionFirstName"> <br>
-    Last name: <input type="text" id="selectionLastName"> <br>
-    <div id="selectionId"></div>
-    <button id="editButton">Edit</button>
+
+  <div id="Users" class="tabcontent">
+    <div id="selectorBox">
+  	 <h2>Selection</h2>
+      <form id="editForm" onsubmit="return false">
+        First name: <input type="text" id="selectionFirstName"> <br>
+        Last name: <input type="text" id="selectionLastName"> <br>
+      <div id="selectionId"></div>
+      <button id="editButton" onclick="readUsers()">Edit</button>
 		</form>
   </div>
-
-  <div>
-
-  </div>
-  <div id="Users" class="tabcontent">
-      
     <a id="createButton" class="createButton" onclick="createUser()">Create</a>
     <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
     <div><input type="text" id="firstName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
