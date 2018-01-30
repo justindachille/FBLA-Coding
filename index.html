@@ -88,17 +88,31 @@
   function createUser() {
       var firstNameText = capitalizeFirstLetter(document.getElementById("firstName").value);
       var lastNameText = capitalizeFirstLetter(document.getElementById("lastName").value);
-      console.log(lastNameText);
       db.collection(USER_COLLECTION).doc().set({
-          firstName: firstNameText,
-          lastName: lastNameText
+        firstName: firstNameText,
+        lastName: lastNameText
       })
       .then(function(docRef) {
-          console.log("user written");
+        console.log("user written");
       });
       readUsers();
   }
-    
+   
+  function createBook() {
+    var bookTitleText = document.getElementById("bookTitle").value;
+    var bookAuthorText = document.getElementById("bookAuthor").value;
+    var bookISBNText = document.getElementById("bookISBN").value;
+    db.collection(USER_COLLECTION).doc().set({
+      title: bookTitleText,
+      author: bookAuthorText
+      ISBN: bookISBNText
+    })
+    .then(function(docRef) {
+      console.log("book written");
+    });
+    readBooks();
+  }
+  
   function makeUserHtml(user) {
 		console.log(user.fullName);
     var name = document.createElement("td");
@@ -125,17 +139,21 @@
 
   function makeBookHtml(book) {
     var title = document.createElement("td");
-    title.className = "username";
+    title.className = "title";
     title.innerHTML = book.title;
-    console.log(book.title);
       
     var author = document.createElement("td");
     author.className = "author";
     author.innerHTML = book.author;
+    
+    var isbn = document.createElement("td");
+    isbn.className = "isbn";
+    isbn.innerHTML = book.ISBN;
       
     var row = document.createElement('tr');
     row.appendChild(title);
     row.appendChild(author);
+    row.appendChild(isbn);
 
     var table = document.createElement('table');
     table.className = "table";
@@ -149,12 +167,16 @@
   }
 
   function disableButtons() {
-    document.getElementById("createButton").className = "disabledButton";
-    document.getElementById("deleteButton").className = "disabledButton";
+    document.getElementById("createUserButton").className = "disabledButton";
+    document.getElementById("deleteUserButton").className = "disabledButton";
+    document.getElementById("createPostButton").className = "disabledButton";
+    document.getElementById("deletePostButton").className = "disabledButton";
   }
   function enableButtons() {
-    document.getElementById("createButton").className = "createButton";
-    document.getElementById("deleteButton").className = "deleteButton";
+    document.getElementById("createPostButton").className = "createButton";
+    document.getElementById("deletePostButton").className = "deleteButton";
+    document.getElementById("createUserButton").className = "createButton";
+    document.getElementById("deleteUserButton").className = "deleteButton";
   }
 
   function onTextChanged() {
@@ -238,7 +260,7 @@
 
   <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'Users');readUsers()" id="defaultOpen">Users</button>
-    <button class="tablinks" onclick="openTab(event, 'Books')">Books</button>
+    <button class="tablinks" onclick="openTab(event, 'Books');readBooks()">Books</button>
   </div>    
 
   <div id="Users" class="tabcontent">
@@ -248,11 +270,11 @@
         First name: <input type="text" id="selectionFirstName"> <br>
         Last name: <input type="text" id="selectionLastName"> <br>
       <div id="selectionId"></div>
-      <button id="editButton" onclick="readUsers()">Edit</button>
-		</form>
-  </div>
-    <a id="createButton" class="createButton" onclick="createUser()">Create</a>
-    <a id="deleteButton" class="deleteButton" onclick="deletePost()">Delete</a>
+        <button id="editButton" onclick="readUsers()">Edit</button>
+		  </form>
+    </div>
+    <a id="createUserButton" class="createButton" onclick="createUser()">Create</a>
+    <a id="deleteUserButton" class="deleteButton" onclick="deleteUser()">Delete</a>
     <div><input type="text" id="firstName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
     <div><input type="text" id="lastName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
     <button onclick="readUsers()">Refresh</button>
@@ -261,6 +283,11 @@
   </div>  
 
   <div id="Books" class="tabcontent">
+    <a id="createPostButton" class="createButton" onclick="createBook()">Create</a>
+    <a id="deletePostButton" class="deleteButton" onclick="deleteBook()">Delete</a>
+    <div><input type="text" id="bookTitle" value="" size="30" maxlength="80" placeholder="Title"></div>
+    <div><input type="text" id="bookAuthor" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="Author"></div>
+    <div><input type="text" id="bookISBN" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="ISBN"></div>
     <button onclick="readBooks()">Refresh</button>
     <div id="bookList"> </div>
   </div>
