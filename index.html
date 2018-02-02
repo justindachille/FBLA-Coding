@@ -5,6 +5,7 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
 <script src="user.js"></script>
+<script src="book.js"></script>  
 <script>
   // Initialize Firebase
   var config = {
@@ -73,6 +74,7 @@
         bookList.innerHTML = "";
         querySnapshot.forEach((doc) => {
             book = doc.data();
+            var newBook = new Book(book.title, book.author, book.genre, book.ISBN, doc.id);
             bookList.appendChild(makeBookHtml(book));
         });
     });
@@ -83,6 +85,11 @@
 		console.log(user.lastName);
     document.getElementById("selectionLastName").value = user.lastName;
 		document.getElementById("selectionId").innerHTML = "Id: " + user.id;
+  }
+  
+  function selectBook(book) {
+    document.getElementById("selectionTitle").value = book.title;
+    document.getElementById("selectionAuthor").value = book.author;
   }
     
   function createUser() {
@@ -101,10 +108,12 @@
   function createBook() {
     var bookTitleText = document.getElementById("bookTitle").value;
     var bookAuthorText = document.getElementById("bookAuthor").value;
+    var bookGenreText = document.getElementById("bookGenre").value;
     var bookISBNText = document.getElementById("bookISBN").value;
-    db.collection(USER_COLLECTION).doc().set({
+    db.collection(BOOK_COLLECTION).doc().set({
       title: bookTitleText,
-      author: bookAuthorText
+      author: bookAuthorText,
+      genre: bookGenreText,
       ISBN: bookISBNText
     })
     .then(function(docRef) {
@@ -146,6 +155,10 @@
     author.className = "author";
     author.innerHTML = book.author;
     
+    var genre = document.createElement("td");
+    genre.className = "genre";
+    genre.innerHTML = book.genre;
+    
     var isbn = document.createElement("td");
     isbn.className = "isbn";
     isbn.innerHTML = book.ISBN;
@@ -153,6 +166,7 @@
     var row = document.createElement('tr');
     row.appendChild(title);
     row.appendChild(author);
+    row.appendChild(genre);
     row.appendChild(isbn);
 
     var table = document.createElement('table');
@@ -163,18 +177,21 @@
 //      table.classList.remove("select");
 //    }
     table.appendChild(row);
+      table.onclick = function () {
+        selectBook(book);
+      }
     return table;
   }
 
   function disableButtons() {
     document.getElementById("createUserButton").className = "disabledButton";
     document.getElementById("deleteUserButton").className = "disabledButton";
-    document.getElementById("createPostButton").className = "disabledButton";
-    document.getElementById("deletePostButton").className = "disabledButton";
+    document.getElementById("createBookButton").className = "disabledButton";
+    document.getElementById("deleteBookButton").className = "disabledButton";
   }
   function enableButtons() {
-    document.getElementById("createPostButton").className = "createButton";
-    document.getElementById("deletePostButton").className = "deleteButton";
+    document.getElementById("createBookButton").className = "createButton";
+    document.getElementById("deleteBookButton").className = "deleteButton";
     document.getElementById("createUserButton").className = "createButton";
     document.getElementById("deleteUserButton").className = "deleteButton";
   }
@@ -283,11 +300,21 @@
   </div>  
 
   <div id="Books" class="tabcontent">
-    <a id="createPostButton" class="createButton" onclick="createBook()">Create</a>
-    <a id="deletePostButton" class="deleteButton" onclick="deleteBook()">Delete</a>
+    <div id="selectorBox">
+  	 <h2>Selection</h2>
+      <form id="editForm" onsubmit="return false">
+        Title: <input type="text" id="selectionTitle"> <br>
+        Author: <input type="text" id="selectionAuthor"> <br>
+      <div id="selectionId"></div>
+        <button id="editButton" onclick="readUsers()">Edit</button>
+		  </form>
+    </div>
+    <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
+    <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
     <div><input type="text" id="bookTitle" value="" size="30" maxlength="80" placeholder="Title"></div>
-    <div><input type="text" id="bookAuthor" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="Author"></div>
-    <div><input type="text" id="bookISBN" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="ISBN"></div>
+    <div><input type="text" id="bookAuthor" oninput="" value="" size="30" maxlength="80" placeholder="Author"></div>
+    <div><input type="text" id="bookGenre" oninput="" value="" size="30" maxlength="80" placeholder="Genre"></div>
+    <div><input type="text" id="bookISBN" oninput="" value="" size="30" maxlength="80" placeholder="ISBN"></div>
     <button onclick="readBooks()">Refresh</button>
     <div id="bookList"> </div>
   </div>
