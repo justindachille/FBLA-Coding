@@ -45,12 +45,17 @@ input {
 }
 
 #selectorBox {
-  float: right;
-  border: 5px solid green;
+  float: left;
+  border: 5px solid grey;
   margin: 25px;
 	padding: 25px;
+  border-radius: 5px;
 }
 
+.list {
+  position: relative;
+  bottom: auto;
+}
 
 h1 {
   color: navy;
@@ -84,6 +89,14 @@ h2 {
   margin: 5px;
 }
 
+/* Input table styling */
+.inputTable {
+  border: 5px solid grey;
+  margin: 0px;
+	padding: 25px;
+  border-radius: 5px;
+}
+
 /* Change background color of buttons on hover */
 .tab button:hover {
     background-color: #ddd;
@@ -96,14 +109,15 @@ h2 {
 
 /* Style the buttons inside the tab */
 .tab button {
-    display: block;
+/*    display: block;*/
     background-color: inherit;
     color: black;
-    padding: 22px 16px;
-    width: 100%;
+    padding: 17px 80px;
+/*    width: 100%;*/
     border: none;
     outline: none;
-    text-align: left;
+    float: left;
+    text-align: center;
     cursor: pointer;
     transition: 0.3s;
     font-size: 17px;
@@ -111,13 +125,14 @@ h2 {
 
 /* Style the tab */
 .tab {
-    float: left;
+/*    float: left;*/
     border: 1px solid #ccc;
     background-color: #f1f1f1;
 		margin-top: 20px;
 		margin-right: 20px;
-    width: 30%;
-    min-height: 100%;
+    overflow: hidden;
+/*    width: 30%;*/
+/*    min-height: 100%;*/
 }
 
 a { font-size:1.1em; padding:5px 10px; display:inline-block; margin:5px; border-radius:6px; border:solid rgba(0,0,0,0.2); border-width:1px 1px 5px; box-shadow:0 5px 0 rgba(0,0,0,0.1), inset 0 0 3px rgba(255,255,255,0.3); cursor:pointer; user-select:none; transition:0.4s ease; }

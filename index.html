@@ -312,7 +312,7 @@
     <div><input type="text" id="firstName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
     <div><input type="text" id="lastName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
     <button onclick="readUsers()">Refresh</button>
-    <div id="userList"> </div>
+    <div id="userList" class="list"> </div>
       
   </div>  
 
@@ -327,14 +327,16 @@
         <button id="editButton" onclick="readUsers()">Edit</button>
 		  </form>
     </div>
-    <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
-    <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
-    <div><input type="text" id="bookTitle" value="" size="30" maxlength="80" placeholder="Title"></div>
-    <div><input type="text" id="bookAuthor" oninput="" value="" size="30" maxlength="80" placeholder="Author"></div>
-    <div><input type="text" id="bookGenre" oninput="" value="" size="30" maxlength="80" placeholder="Genre"></div>
-    <div><input type="text" id="bookISBN" oninput="" value="" size="30" maxlength="80" placeholder="ISBN"></div>
-    <button onclick="readBooks()">Refresh</button>
-    <div id="bookList"> </div>
+    <div class="inputTable">
+      <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
+      <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
+      <div><input type="text" id="bookTitle" value="" size="30" maxlength="80" placeholder="Title"></div>
+      <div><input type="text" id="bookAuthor" oninput="" value="" size="30" maxlength="80" placeholder="Author"></div>
+      <div><input type="text" id="bookGenre" oninput="" value="" size="30" maxlength="80" placeholder="Genre"></div>
+      <div><input type="text" id="bookISBN" oninput="" value="" size="30" maxlength="80" placeholder="ISBN"></div>
+      <button onclick="readBooks()">Refresh</button>
+    </div>
+    <div id="bookList" class="list"> </div>
   </div>
     
     <script>
