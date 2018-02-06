@@ -22,6 +22,7 @@
   var USER_COLLECTION = "users";
   var BOOK_COLLECTION = "books";
 	var selectedUserId = "";
+  var selectedBookId = "";
 
 	window.addEventListener("DOMContentLoaded", function() {
 		var form = document.getElementById("editForm");
@@ -75,14 +76,14 @@
         querySnapshot.forEach((doc) => {
             book = doc.data();
             var newBook = new Book(book.title, book.author, book.genre, book.ISBN, doc.id);
-            bookList.appendChild(makeBookHtml(book));
+                      console.log("book id: " + doc.id + "new book id: " + newBook.id);
+            bookList.appendChild(makeBookHtml(newBook));
         });
     });
   }
   
   function selectUser(user) {
     document.getElementById("selectionFirstName").value = user.firstName;
-		console.log(user.lastName);
     document.getElementById("selectionLastName").value = user.lastName;
 		document.getElementById("selectionId").innerHTML = "Id: " + user.id;
   }
@@ -90,6 +91,7 @@
   function selectBook(book) {
     document.getElementById("selectionTitle").value = book.title;
     document.getElementById("selectionAuthor").value = book.author;
+    document.getElementById("selectionISBN").value = book.ISBN;
   }
     
   function createUser() {
@@ -123,7 +125,6 @@
   }
   
   function makeUserHtml(user) {
-		console.log(user.fullName);
     var name = document.createElement("td");
     name.className = "name";
     name.innerHTML = user.fullName;
@@ -171,14 +172,17 @@
 
     var table = document.createElement('table');
     table.className = "table";
-//    if (post.text === selectedPostText) {
-//      table.classList.add("select");
-//    } else {
-//      table.classList.remove("select");
-//    }
+    if (book.id === selectedBookId) {
+      table.classList.add("select");
+    } else {
+      table.classList.remove("select");
+    }
     table.appendChild(row);
       table.onclick = function () {
         selectBook(book);
+        selectedBookId = book.id;
+        console.log("selected book: " + book.title + " with id: "  + book.id);
+        readBooks();
       }
     return table;
   }
@@ -196,6 +200,19 @@
     document.getElementById("deleteUserButton").className = "deleteButton";
   }
 
+  
+  function deleteBook() {
+    if (!selectedBookId) {
+      return;
+    }
+    db.collection(BOOK_COLLECTION).doc(selectedBookId).delete().then(function() {
+      console.log("Document successfully deleted!");
+    }).catch(function(error) {
+      console.error("Error removing document: ", error);
+    });
+    readBooks();
+  }
+  
   function onTextChanged() {
     if (selectedUserId) {
       enableButtons();
@@ -305,7 +322,8 @@
       <form id="editForm" onsubmit="return false">
         Title: <input type="text" id="selectionTitle"> <br>
         Author: <input type="text" id="selectionAuthor"> <br>
-      <div id="selectionId"></div>
+        ISBN: <input type="text" id="selectionISBN"> <br>
+        <div id="selectionId"></div>
         <button id="editButton" onclick="readUsers()">Edit</button>
 		  </form>
     </div>
