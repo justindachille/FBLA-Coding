@@ -44,14 +44,6 @@ input {
   text-shadow: none;
 }
 
-#selectorBox {
-  float: left;
-  border: 5px solid grey;
-  margin: 25px;
-	padding: 25px;
-  border-radius: 5px;
-}
-
 .list {
   position: relative;
   bottom: auto;
@@ -91,8 +83,18 @@ h2 {
 
 /* Input table styling */
 .inputTable {
+  float: left;
   border: 5px solid grey;
-  margin: 0px;
+  margin: 10px;
+  width: auto;
+	padding: 25px;
+  border-radius: 5px;
+}
+
+#selectorBox {
+  float: left;
+  border: 5px solid grey;
+  margin: 10px;
 	padding: 25px;
   border-radius: 5px;
 }

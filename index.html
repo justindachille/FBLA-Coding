@@ -21,6 +21,7 @@
   var db = firebase.firestore();
   var USER_COLLECTION = "users";
   var BOOK_COLLECTION = "books";
+  var CHECKOUT_COLLECTION = "checkouts";
 	var selectedUserId = "";
   var selectedBookId = "";
 
@@ -75,8 +76,8 @@
         bookList.innerHTML = "";
         querySnapshot.forEach((doc) => {
             book = doc.data();
-            var newBook = new Book(book.title, book.author, book.genre, book.ISBN, doc.id);
-                      console.log("book id: " + doc.id + "new book id: " + newBook.id);
+            var newBook = new Book(book.title, book.author, book.genre, book.ISBN, book.copies,  doc.id);
+            console.log("book id: " + doc.id + "new book id: " + newBook.id);
             bookList.appendChild(makeBookHtml(newBook));
         });
     });
@@ -92,6 +93,8 @@
     document.getElementById("selectionTitle").value = book.title;
     document.getElementById("selectionAuthor").value = book.author;
     document.getElementById("selectionISBN").value = book.ISBN;
+    document.getElementById("selectionId").innerHTML = book.id;
+    document.getElementById("checkoutBookTitle").innerHTML = book.title;
   }
     
   function createUser() {
@@ -112,11 +115,13 @@
     var bookAuthorText = document.getElementById("bookAuthor").value;
     var bookGenreText = document.getElementById("bookGenre").value;
     var bookISBNText = document.getElementById("bookISBN").value;
+    var bookCopiesText = document.getElementById("bookCopies").value;
     db.collection(BOOK_COLLECTION).doc().set({
       title: bookTitleText,
       author: bookAuthorText,
       genre: bookGenreText,
-      ISBN: bookISBNText
+      ISBN: bookISBNText,
+      copies: bookCopiesText
     })
     .then(function(docRef) {
       console.log("book written");
@@ -173,9 +178,7 @@
     var table = document.createElement('table');
     table.className = "table";
     if (book.id === selectedBookId) {
-      table.classList.add("select");
-    } else {
-      table.classList.remove("select");
+      table.classList.add("tableSelected");
     }
     table.appendChild(row);
       table.onclick = function () {
@@ -187,19 +190,18 @@
     return table;
   }
 
-  function disableButtons() {
-    document.getElementById("createUserButton").className = "disabledButton";
-    document.getElementById("deleteUserButton").className = "disabledButton";
-    document.getElementById("createBookButton").className = "disabledButton";
-    document.getElementById("deleteBookButton").className = "disabledButton";
+  function checkout() {
+    var checkoutUserId = document.getElementById("checkoutUserId").value;
+    console.log("checking out with book id: " + selectedBookId);
+    db.collection(CHECKOUT_COLLECTION).doc().set({
+      userId: checkoutUserId,
+      bookId: selectedBookId
+    })
+    .then(function(docRef) {
+      console.log("book checked out!");
+    });
+    readUsers();    
   }
-  function enableButtons() {
-    document.getElementById("createBookButton").className = "createButton";
-    document.getElementById("deleteBookButton").className = "deleteButton";
-    document.getElementById("createUserButton").className = "createButton";
-    document.getElementById("deleteUserButton").className = "deleteButton";
-  }
-
   
   function deleteBook() {
     if (!selectedBookId) {
@@ -213,13 +215,42 @@
     readBooks();
   }
   
-  function onTextChanged() {
+  function onUserTextChanged() {
     if (selectedUserId) {
-      enableButtons();
+      enableUserButtons();
     } else {
-      disableButtons();
+      disableUserButtons();
     }
     readUsers();
+  }
+  
+  function onBookTextChanged() {
+    if (selectedBookId) {
+      enableBookButtons();
+    } else {
+      disableBookButtons();
+    }
+    readBooks();
+  }
+    
+  function enableUserButtons() {
+    document.getElementById("createBookButton").className = "createButton";
+    document.getElementById("deleteBookButton").className = "deleteButton";
+  }
+  
+  function disableUserButtons() {
+    document.getElementById("createUserButton").className = "disabledButton";
+    document.getElementById("deleteUserButton").className = "disabledButton";
+  }
+  
+  function enableBookButtons() {
+    document.getElementById("createUserButton").className = "createButton";
+    document.getElementById("deleteUserButton").className = "deleteButton";    
+  }
+  
+  function disableBookButtons() {
+    document.getElementById("createBookButton").className = "disabledButton";
+    document.getElementById("deleteBookButton").className = "disabledButton";
   }
 
   function addedPost(post) {
@@ -295,6 +326,7 @@
   <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'Users');readUsers()" id="defaultOpen">Users</button>
     <button class="tablinks" onclick="openTab(event, 'Books');readBooks()">Books</button>
+    <button class="tablinks" onclick="openTab(event, 'Checkouts');readBooks()">Checkouts</button>
   </div>    
 
   <div id="Users" class="tabcontent">
@@ -307,36 +339,50 @@
         <button id="editButton" onclick="readUsers()">Edit</button>
 		  </form>
     </div>
-    <a id="createUserButton" class="createButton" onclick="createUser()">Create</a>
-    <a id="deleteUserButton" class="deleteButton" onclick="deleteUser()">Delete</a>
-    <div><input type="text" id="firstName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
-    <div><input type="text" id="lastName" oninput="onTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
-    <button onclick="readUsers()">Refresh</button>
+    <div class="inputTable">
+      <a id="createUserButton" class="createButton" onclick="createUser()">Create</a>
+      <a id="deleteUserButton" class="deleteButton" onclick="deleteUser()">Delete</a>
+      <div><input type="text" id="firstName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
+      <div><input type="text" id="lastName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
+      <button onclick="readUsers()">Refresh</button>
+    </div>
     <div id="userList" class="list"> </div>
       
   </div>  
 
   <div id="Books" class="tabcontent">
     <div id="selectorBox">
-  	 <h2>Selection</h2>
+  	 <h2>Edit book</h2>
       <form id="editForm" onsubmit="return false">
         Title: <input type="text" id="selectionTitle"> <br>
         Author: <input type="text" id="selectionAuthor"> <br>
         ISBN: <input type="text" id="selectionISBN"> <br>
-        <div id="selectionId"></div>
+        <div id="selectionId">Selection ID</div> <br>
         <button id="editButton" onclick="readUsers()">Edit</button>
 		  </form>
+    <h2>Checkout book</h2>
+      <form id="checkoutForm" onsubmit="return false">
+        User Id: <input type="text" id="checkoutUserId"> <br>
+        Selected Book: <div id="checkoutBookTitle">Test</div>
+        Copies available: <div id="checkoutCopies"></div> <br>
+        <button id="checkoutButton" onclick="checkout()">Checkout</button>
+      </form>
     </div>
     <div class="inputTable">
       <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
       <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
-      <div><input type="text" id="bookTitle" value="" size="30" maxlength="80" placeholder="Title"></div>
-      <div><input type="text" id="bookAuthor" oninput="" value="" size="30" maxlength="80" placeholder="Author"></div>
-      <div><input type="text" id="bookGenre" oninput="" value="" size="30" maxlength="80" placeholder="Genre"></div>
-      <div><input type="text" id="bookISBN" oninput="" value="" size="30" maxlength="80" placeholder="ISBN"></div>
+      <div><input type="text" id="bookTitle" oninput="onBookTextChanged" value="" size="30" maxlength="80" placeholder="Title"></div>
+      <div><input type="text" id="bookAuthor" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Author"></div>
+      <div><input type="text" id="bookGenre" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Genre"></div>
+      <div><input type="text" id="bookISBN" oninput="onBookTextChanged" value="" size="30" maxlength="80" placeholder="ISBN"></div>
+      <div><input type="text" id="bookCopies" oninput="onBookTextChanged" value="" size="30" maxlength="80" placeholder="Copies"></div>      
       <button onclick="readBooks()">Refresh</button>
     </div>
     <div id="bookList" class="list"> </div>
+  </div>
+  
+  <div id="Checkout" class="tabcontent">
+  
   </div>
     
     <script>
