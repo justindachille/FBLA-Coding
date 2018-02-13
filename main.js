@@ -89,18 +89,26 @@
     document.getElementById("checkoutSelectionId").innerHTML = selectedBookId;
     document.getElementById("checkoutBookTitle").innerHTML = book.title;
     var checkoutsRef = db.collection(CHECKOUT_COLLECTION);
-    checkoutsRef.where("bookId", "==", selectedBookId).get().then(function(querySnapshot) {
+    checkoutsRef.where("bookId", "==", selectedBookId).where("checkInDate", "==", null).get().then(function(querySnapshot) {
         var count = querySnapshot.docs.length;
-        document.getElementById("checkoutCopies").innerHTML = book.copies - count;
+        var remainingCopies = book.copies - count;
+        document.getElementById("checkoutCopies").innerHTML = remainingCopies;
+        if (remainingCopies == 0) {
+          document.getElementById("checkoutButton").disabled = true;
+        } else {
+          document.getElementById("checkoutButton").disabled = false;          
+        }
     });
   }
     
   function createUser() {
       var firstNameText = capitalizeFirstLetter(document.getElementById("firstName").value);
       var lastNameText = capitalizeFirstLetter(document.getElementById("lastName").value);
+      var isTeacherChecked = document.getElementById("isTeacher").checked;
       db.collection(USER_COLLECTION).doc().set({
         firstName: firstNameText,
-        lastName: lastNameText
+        lastName: lastNameText,
+        isTeacher: isTeacherChecked
       })
       .then(function(docRef) {
         console.log("user written");
@@ -219,7 +227,7 @@
     db.collection(CHECKOUT_COLLECTION).doc().set({
       userId: checkoutUserId,
       bookId: selectedBookId,
-      date: new Date()
+      checkOutDate: new Date()
     })
     .then(function(docRef) {
       console.log("book checked out!");

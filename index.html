@@ -21,24 +21,34 @@
   </div>    
 
   <div id="Users" class="tabcontent">
-    <div id="selectorBox">
-  	 <h2>Edit User</h2>
-      <form id="editForm" onsubmit="return false">
-        First name: <input type="text" id="selectionFirstName"> <br>
-        Last name: <input type="text" id="selectionLastName"> <br>
-        <div id="selectionId"></div>
-        <a id="editButton" onclick="readUsers()" class="createButton">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
-		  </form>
-    </div>
-    <div class="inputTable">
-      <h2> Create User</h2>
-      <div><input type="text" id="firstName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
-      <div><input type="text" id="lastName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
-      <a id="createUserButton" class="createButton" onclick="createUser()">Create</a>
-      <a id="deleteUserButton" class="deleteButton" onclick="deleteUser()">Delete</a>
+    <table>
+      <tr>
+        <td>
+          <div id="selectorBox">
+            <h2>Edit User</h2>
+            <form id="editForm" onsubmit="return false">
+            First name: <input type="text" id="selectionFirstName"> <br>
+            Last name: <input type="text" id="selectionLastName"> <br>
+            <div id="selectionId"></div>
+            <a id="editButton" onclick="readUsers()" class="createButton">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
+            </form>
+          </div>         
+        </td>
+        <td>
+          <div class="inputTable">
+            <h2> Create User</h2>
+            <div><input type="text" id="firstName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
+            <div><input type="text" id="lastName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
+            <div>Teacher?<input type="checkbox" id="isTeacher" oninput="onUserTextChanged()" value="" placeholder="Teacher?"></div>            
+            <a id="createUserButton" class="createButton" onclick="createUser()">Create</a>
+            <a id="deleteUserButton" class="deleteButton" onclick="deleteUser()">Delete</a>
+            <button onclick="readUsers()">Refresh</button>
+          </div>          
+        </td>
+      </tr>
+    </table>
 
-      <button onclick="readUsers()">Refresh</button>
-    </div>
+
     
     <div id="userList" class="list"> </div>
       
@@ -48,10 +58,10 @@
     <div id="selectorBox">
   	 <h2>Edit book</h2>
       <form id="editForm" onsubmit="return false">
-        <div>Title: <input type="text" id="selectionTitle"></div> <br>
-        <div>Author: <input type="text" id="selectionAuthor"></div> <br>
+        <div>Title: <input type="text" id="selectionTitle"></div>
+        <div>Author: <input type="text" id="selectionAuthor"></div>
         ISBN: <input type="text" id="selectionISBN"> <br>
-        <div id="checkoutSelectionId">Selection ID: </div> <br>
+        <div id="checkoutSelectionId">Selection ID: </div> 
         <button id="editButton" onclick="readUsers()">Edit</button>
 		  </form>
       <h2>Checkout book</h2>
@@ -75,7 +85,7 @@
     <div id="bookList" class="list"> </div>
   </div>
   
-  <div id="Checkout" class="tabcontent" style="clear:both;">
+  <div id="Checkout" class="tabcontent">
   
   </div>
     
