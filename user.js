@@ -1,7 +1,8 @@
 class User {
-  constructor (firstName, lastName, id) {
+  constructor (firstName, lastName, isTeacher, id) {
     this._firstName = firstName;
     this._lastName = lastName;
+    this._isTeacher = isTeacher;
     this._id = id;
   }
 
@@ -13,16 +14,6 @@ class User {
     var words = name.toString().split(' ');
     this.firstName = words[0] || '';
     this.lastName = words[1] || '';
-  }
-
-  get id () {
-    return this._id;
-  }
-
-  set id (newId) {
-    if (newId) {
-      this._id = newId;
-    }
   }
 	
 	get firstName () {
@@ -44,7 +35,25 @@ class User {
 			this.lastName = newLastName;
 		}
 	}
-    
+  
+  get isTeacher () {
+    return this._isTeacher;
+  }
+  
+  set isTeacher (newIsTeacher) {
+    this._isTeacher = newIsTeacher;
+  }
+  
+  get id () {
+    return this._id;
+  }
+
+  set id (newId) {
+    if (newId) {
+      this._id = newId;
+    }
+  }
+  
   generateFullName () {
     if (firstName && lastName) {
       return String(this.firstName) + " " + String(this.lastName);

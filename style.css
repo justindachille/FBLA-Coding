@@ -118,7 +118,6 @@ h2 {
 /*  float: left;*/
   border: 5px solid grey;
   margin: 5px;
-  width: auto;
 	padding: 5px;
   border-radius: 5px;
   clear: both;
@@ -130,6 +129,7 @@ h2 {
   margin: 5px;
 	padding: 5px;
   border-radius: 5px;
+  width: auto;
 }
 
 .bookList {
