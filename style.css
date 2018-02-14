@@ -34,7 +34,7 @@ input {
 }
 
 #logo:after {
-  content:"library";
+  content: "library";
   position: absolute;
   left: 6px;
   top: 20;
@@ -62,8 +62,8 @@ h1 {
 }
 
 h2 {
-	color: gray;
-	text-align: center;
+  color: gray;
+  text-align: center;
 }
 
 .username {
@@ -73,27 +73,37 @@ h2 {
 }
 
 .table {
-    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
 }
 
-.table td, .table th {
-    border: 1px solid #ddd;
-    padding: 8px;
+.table td,
+.table th {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
-.table tr:nth-child(even){background-color: #f2f2f2;}
+.table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
 
-.table tr:hover {background-color: #ddd;}
+.table tr:hover {
+  background-color: #ddd;
+}
 
 .table th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: left;
-    background-color: #4CAF50;
-    color: white;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
 }
+
+#fineTable {
+  background-color: #DE6461;
+}
+
 /*
 
 .table {
@@ -114,72 +124,110 @@ h2 {
 }
 
 /* Input table styling */
+
 .inputTable {
-/*  float: left;*/
+  /*  float: left;*/
   border: 5px solid grey;
   margin: 5px;
-	padding: 5px;
+  padding: 5px;
   border-radius: 5px;
   clear: both;
 }
 
 #selectorBox {
-/*  float: left;*/
+  /*  float: left;*/
   border: 5px solid grey;
   margin: 5px;
-	padding: 5px;
+  padding: 5px;
   border-radius: 5px;
   width: auto;
 }
 
 .bookList {
-/*  float: right;*/
+  /*  float: right;*/
 }
 
 /* Change background color of buttons on hover */
+
 .tab button:hover {
-    background-color: #ddd;
+  background-color: #ddd;
 }
 
 /* Create an active/current "tab button" class */
+
 .tab button.active {
-    background-color: #ccc;
+  background-color: #ccc;
 }
 
 /* Style the buttons inside the tab */
+
 .tab button {
-/*    display: block;*/
-    background-color: inherit;
-    color: black;
-    padding: 17px 80px;
-/*    width: 100%;*/
-    border: none;
-    outline: none;
-/*    float: left;*/
-    text-align: center;
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 17px;
+  /*    display: block;*/
+  background-color: inherit;
+  color: black;
+  padding: 17px 80px;
+  /*    width: 100%;*/
+  border: none;
+  outline: none;
+  /*    float: left;*/
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 17px;
 }
 
 /* Style the tab */
+
 .tab {
-/*    float: left;*/
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
-		margin-top: 20px;
-		margin-right: 20px;
-    overflow: hidden;
-/*    width: 30%;*/
-/*    min-height: 100%;*/
+  /*    float: left;*/
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  margin-top: 20px;
+  margin-right: 20px;
+  overflow: hidden;
+  /*    width: 30%;*/
+  /*    min-height: 100%;*/
 }
 
-a { font-size:1.1em; padding:5px 10px; display:inline-block; margin:5px; border-radius:6px; border:solid rgba(0,0,0,0.2); border-width:1px 1px 5px; box-shadow:0 5px 0 rgba(0,0,0,0.1), inset 0 0 3px rgba(255,255,255,0.3); cursor:pointer; user-select:none; transition:0.4s ease; }
+a {
+  font-size: 1.1em;
+  padding: 5px 10px;
+  display: inline-block;
+  margin: 5px;
+  border-radius: 6px;
+  border: solid rgba(0, 0, 0, 0.2);
+  border-width: 1px 1px 5px;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1), inset 0 0 3px rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  user-select: none;
+  transition: 0.4s ease;
+}
 
-a:hover { transform:translateY(-3px); box-shadow:0 6px 0 rgba(0,0,0,0.1), inset 0 0 1px rgba(255,255,255,0.4); border-bottom-width:8px; }
+a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1), inset 0 0 1px rgba(255, 255, 255, 0.4);
+  border-bottom-width: 8px;
+}
 
-a:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,0.1), inset 0 0 5px rgba(255,255,255,0.4); border-bottom-width:2px; transition:0.1s ease; }
+a:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1), inset 0 0 5px rgba(255, 255, 255, 0.4);
+  border-bottom-width: 2px;
+  transition: 0.1s ease;
+}
 
-.createButton { background:hsl(104,51%,62%); } /* green */
-.deleteButton { background:hsl(8,59%,59%); } /* red */
-.disabledButton { background:hsl(8,5%,89%); }
+.createButton {
+  background: hsl(104, 51%, 62%);
+}
+
+/* green */
+
+.deleteButton {
+  background: hsl(8, 59%, 59%);
+}
+
+/* red */
+
+.disabledButton {
+  background: hsl(8, 5%, 89%);
+}

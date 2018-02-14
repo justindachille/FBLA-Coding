@@ -11,6 +11,7 @@
   var db = firebase.firestore();
   var CHECKOUT_PERIOD = 14;
   var MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
+  var OVERDUE_COST_PER_DAY = 0.18;
   var USER_COLLECTION = "users";
   var BOOK_COLLECTION = "books";
   var CHECKOUT_COLLECTION = "checkouts";
@@ -56,6 +57,22 @@
   }
 
   function makeFineReport() {
+    var checkoutsRef = db.collection(CHECKOUT_COLLECTION);
+    var dueDate = addDays(new Date(), -CHECKOUT_PERIOD);
+    //.where("checkOutDate", ">", dueDate)
+    checkoutsRef.where("checkOutDate", "<", dueDate).get().then(function (querySnapshot) {
+      var checkoutList = document.querySelector("#fineList");
+      checkoutList.innerHTML = "";
+      var table = document.createElement("table");
+      table.className = "table";
+      table.appendChild(makeFineHeader());
+      checkoutList.appendChild(table);
+      querySnapshot.forEach((doc) => {
+        var checkout = doc.data();
+        var newCheckout = new Checkout(checkout.userId, checkout.userFullName, checkout.bookId, checkout.bookTitle, checkout.checkOutDate, doc.id);
+        table.appendChild(makeFineHtml(newCheckout));
+      });
+    });
 
   }
 
@@ -63,7 +80,7 @@
     var checkoutsRef = db.collection(CHECKOUT_COLLECTION);
     var dueDate = addDays(new Date(), -CHECKOUT_PERIOD);
     //.where("checkOutDate", ">", dueDate)
-    checkoutsRef.get().then(function (querySnapshot) {
+    checkoutsRef.where("checkOutDate", ">", dueDate).get().then(function (querySnapshot) {
       var checkoutList = document.querySelector("#checkoutList");
       checkoutList.innerHTML = "";
       var table = document.createElement("table");
@@ -109,8 +126,6 @@
       });
     });
   }
-
-
 
   function selectUser(user) {
     document.getElementById("selectionFirstName").value = user.firstName;
@@ -171,6 +186,67 @@
     readBooks();
   }
 
+  function makeFineHeader() {
+    var bookTitle = document.createElement("th");
+    bookTitle.className = "bookTitle";
+    bookTitle.id = "fineTable";
+    bookTitle.innerHTML = "Book Title";
+
+    var username = document.createElement("th");
+    username.className = "username";
+    username.id = "fineTable";
+    username.innerHTML = "Name";
+
+    var fine = document.createElement("th");
+    fine.className = "fine";
+    fine.id = "fineTable";
+    fine.innerHTML = "Fine";
+
+    var date = document.createElement("th");
+    date.className = "date";
+    date.id = "fineTable";
+    date.innerHTML = "Days until due";
+
+    var row = document.createElement('tr');
+    row.id = "fineTable";
+    row.appendChild(bookTitle);
+    row.appendChild(username);
+    row.appendChild(fine);
+    row.appendChild(date);
+    return row;
+  }
+
+  function makeFineHtml(checkout) {
+    var bookTitle = document.createElement("td");
+    bookTitle.className = "bookTitle";
+    bookTitle.innerHTML = checkout.bookTitle;
+
+    var username = document.createElement("td");
+    username.className = "username";
+    username.innerHTML = checkout.userFullName;
+    
+    var date = document.createElement("td");
+    date.className = "date";
+    var checkInDate = addDays(checkout.checkOutDate, CHECKOUT_PERIOD);
+    //    checkInDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
+    var timeDifference = checkInDate - (new Date());
+    var daysOverdue = Math.abs(Math.floor(timeDifference / MILLIS_PER_DAY));
+    date.innerHTML = daysOverdue;
+
+    var fine = document.createElement("td");
+    fine.classname = "fine";
+    var fineAmount = OVERDUE_COST_PER_DAY * daysOverdue;
+    fine.innerHTML = "$" + fineAmount.toFixed(2);
+    
+    var row = document.createElement('tr');
+    row.appendChild(bookTitle);
+    row.appendChild(username);
+    row.appendChild(fine);
+    row.appendChild(date);
+
+    return row;
+  }
+
   function makeCheckoutHeader() {
     var bookTitle = document.createElement("th");
     bookTitle.className = "bookTitle";
@@ -198,11 +274,11 @@
     var username = document.createElement("td");
     username.className = "username";
     username.innerHTML = checkout.userFullName;
-    
+
     var date = document.createElement("td");
     date.className = "date";
     var checkInDate = addDays(checkout.checkOutDate, CHECKOUT_PERIOD);
-//    checkInDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
+    //    checkInDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
     var timeDifference = checkInDate - (new Date());
     date.innerHTML = Math.floor(timeDifference / MILLIS_PER_DAY);
 
@@ -465,12 +541,12 @@
   }
 
   function parseDate(str) {
-      var mdy = str.split('/');
-      return new Date(mdy[2], mdy[0]-1, mdy[1]);
+    var mdy = str.split('/');
+    return new Date(mdy[2], mdy[0] - 1, mdy[1]);
   }
 
   function daydiff(first, second) {
-      return Math.round((second-first)/(1000*60*60*24));
+    return Math.round((second - first) / (1000 * 60 * 60 * 24));
   }
 
   function openTab(evt, tabName) {
@@ -486,4 +562,3 @@
     evt.currentTarget.className += " active";
   }
   document.getElementById("defaultOpen").click();
-
