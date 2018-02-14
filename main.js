@@ -205,7 +205,7 @@
     var date = document.createElement("th");
     date.className = "date";
     date.id = "fineTable";
-    date.innerHTML = "Days until due";
+    date.innerHTML = "Days after due";
 
     var row = document.createElement('tr');
     row.id = "fineTable";
@@ -224,7 +224,7 @@
     var username = document.createElement("td");
     username.className = "username";
     username.innerHTML = checkout.userFullName;
-    
+
     var date = document.createElement("td");
     date.className = "date";
     var checkInDate = addDays(checkout.checkOutDate, CHECKOUT_PERIOD);
@@ -237,7 +237,7 @@
     fine.classname = "fine";
     var fineAmount = OVERDUE_COST_PER_DAY * daysOverdue;
     fine.innerHTML = "$" + fineAmount.toFixed(2);
-    
+
     var row = document.createElement('tr');
     row.appendChild(bookTitle);
     row.appendChild(username);
@@ -302,11 +302,16 @@
     var isTeacher = document.createElement("th");
     isTeacher.className = "isTeacher";
     isTeacher.innerHTML = "Teacher or Student";
+    
+    var id = document.createElement("th");
+    id.className = "id";
+    id.innerHTML = "Id";
 
     var row = document.createElement('tr');
     row.appendChild(firstName);
     row.appendChild(lastName);
     row.appendChild(isTeacher);
+    row.appendChild(id);
 
     return row;
   }
@@ -326,11 +331,16 @@
     if (user.isTeacher) {
       isTeacher.innerHTML = "Teacher";
     }
+    
+    var id = document.createElement("td");
+    id.className = "id";
+    id.innerHTML = user.id;
 
     var row = document.createElement('tr');
     row.appendChild(firstName);
     row.appendChild(lastName);
     row.appendChild(isTeacher);
+    row.appendChild(id);
 
     if (user.id === selectedUserId) {
       row.className = "tableSelected";
@@ -449,10 +459,15 @@
   }
 
   function onUserTextChanged() {
-    if (selectedUserId) {
+    var firstNameInput = document.getElementById("firstName").value;
+    var lastNameInput = document.getElementById("lastName").value;
+    var isTeacherInput = document.getElementById("isTeacher").value;
+    if (firstNameInput || lastNameInput || isTeacherInput) {
       enableUserButtons();
+      console.log("enabled buttons");
     } else {
       disableUserButtons();
+      console.log("disabled buttons");
     }
     readUsers();
   }
@@ -467,8 +482,8 @@
   }
 
   function enableUserButtons() {
-    document.getElementById("createBookButton").className = "createButton";
-    document.getElementById("deleteBookButton").className = "deleteButton";
+    document.getElementById("createUserButton").className = "createButton";
+    document.getElementById("deleteUserButton").className = "deleteButton";
   }
 
   function disableUserButtons() {
@@ -477,8 +492,8 @@
   }
 
   function enableBookButtons() {
-    document.getElementById("createUserButton").className = "createButton";
-    document.getElementById("deleteUserButton").className = "deleteButton";
+    document.getElementById("createBookButton").className = "createButton";
+    document.getElementById("deleteBookButton").className = "deleteButton";
   }
 
   function disableBookButtons() {
