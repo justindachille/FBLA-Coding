@@ -1,13 +1,23 @@
 class Book {
-  constructor (title, author, genre, ISBN, copies, id) {
+  constructor (title, author, genre, ISBN, pubdate, pages, copies, id) {
     this._title = title;
     this._author = author;
     this._genre = genre;
     this._ISBN = ISBN;
+    this._pubdate = pubdate;
+    this._pages = pages;
     this._copies = copies;
     this._id = id;
   }
   
+  containsString (queryString) {
+    var lowerCaseQueryString = queryString.toLowerCase();
+    return this._title.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._author.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._genre.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._ISBN.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._pubdate.toLowerCase().indexOf(lowerCaseQueryString) !== -1;
+  }
   get title () {
     return this._title;
   }
@@ -38,6 +48,22 @@ class Book {
   
   set ISBN (newISBN) {
     this._ISBN = newISBN;
+  }
+  
+  get pubdate () {
+    return this._pubdate;
+  }
+  
+  set pubdate (newPubdate) {
+    this._pubdate = newPubdate;
+  }
+  
+  get pages () {
+    return this._pages;
+  }
+  
+  set pages (newPages) {
+    this._pages = newPages;
   }
   
   get copies () {

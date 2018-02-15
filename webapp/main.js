@@ -6,18 +6,76 @@
     storageBucket: "library-d7f65.appspot.com",
     messagingSenderId: "634700996570"
   };
+
+  function loadJSON(callback) {
+
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+    xobj.open('GET', 'userdata.json', true); // Replace 'my_data' with the path to your file
+    xobj.onreadystatechange = function () {
+      if (xobj.readyState == 4 && xobj.status == "200") {
+        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+        callback(xobj.responseText);
+      }
+    };
+    xobj.send(null);
+  }
+
   firebase.initializeApp(config);
   // Initialize Cloud Firestore through Firebase
   var db = firebase.firestore();
   var CHECKOUT_PERIOD = 14;
   var MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
   var OVERDUE_COST_PER_DAY = 0.18;
+  var USER_MAX_READ = 30;
+  var BOOK_MAX_READ = 5;
   var USER_COLLECTION = "users";
   var BOOK_COLLECTION = "books";
   var CHECKOUT_COLLECTION = "checkouts";
   var selectedUserId = "";
   var selectedBookId = "";
   var selectedBookTitle = "";
+
+  function importData() {
+    createBook(title, author, genre, ISBN, pubdate, pages)
+    loadJSON(function (response) {
+      // Parse JSON string into object
+      var actual_JSON = JSON.parse(response);
+      for (var i = 0; i < 1; i++) {
+        console.log(actual_JSON[i].author);
+        var bookAuthor = actual_JSON[i].author
+
+        var bookTitle = actual_JSON[i].title;
+        console.log(actual_JSON[i].title);
+
+        var bookISBN = actual_JSON[i].isbn13;
+        console.log(actual_JSON[i].isbn13);
+
+        var bookGenre = actual_JSON[i].subjects;
+        var bookGenreSplit = bookGenre.substr(0, bookGenre.indexOf(','));
+        console.log(actual_JSON[i].subjects);
+
+        var bookPubdate = actual_JSON[i].pubdate;
+        console.log(actual_JSON[i].pubdate);
+
+        var bookPages = actual_JSON[i].pages;
+        console.log(actual_JSON[i].pages);
+        createBookArgs(bookTitle, bookAuthor, bookGenreSplit, bookISBN, bookPubdate, bookPages);
+      }
+    });
+
+    loadJSON(function (response) {
+      var actual_JSON = JSON.parse(response);
+      // Parse JSON string into object
+      for (var i = 0; i < 50; i++) {
+        var userFirstName = actual_JSON[i].firstName;
+        var userLastname = actual_JSON[i].lastName;
+
+        createUserArgs(userFirstName, userLastname);
+      }
+    });
+
+  }
 
   window.addEventListener("DOMContentLoaded", function () {
     var form = document.getElementById("editForm");
@@ -96,7 +154,7 @@
   }
 
   function readUsers() {
-    db.collection(USER_COLLECTION).get().then((querySnapshot) => {
+    db.collection(USER_COLLECTION).limit(USER_MAX_READ).get().then((querySnapshot) => {
       var userList = document.querySelector("#userList");
       userList.innerHTML = "";
       var table = document.createElement("table");
@@ -111,8 +169,18 @@
     });
   }
 
-  function readBooks() {
+  function searchBooks() {
+    var searchText = document.getElementById("bookSearch").value;
+    readBooks(searchText);
+  }
+
+  function readAllBooks() {
+    readBooks("");
+  }
+
+  function readBooks(queryString) {
     db.collection(BOOK_COLLECTION).get().then((querySnapshot) => {
+      var readCount = 0;
       var bookList = document.querySelector("#bookList");
       bookList.innerHTML = "";
       var table = document.createElement('table');
@@ -121,8 +189,15 @@
       bookList.appendChild(table);
       querySnapshot.forEach((doc) => {
         book = doc.data();
-        var newBook = new Book(book.title, book.author, book.genre, book.ISBN, book.copies, doc.id);
-        table.appendChild(makeBookHtml(newBook));
+        //constructor (title, author, genre, ISBN, pubdate, pages, copies, id)
+        var newBook = new Book(book.title, book.author, book.genre, book.ISBN, book.pubdate, book.pages, book.copies, doc.id);
+        if (newBook.containsString(queryString)) {
+          if (readCount >= BOOK_MAX_READ) {
+            return;
+          }
+          table.appendChild(makeBookHtml(newBook));
+          readCount++;
+        }
       });
     });
   }
@@ -131,6 +206,7 @@
     document.getElementById("selectionFirstName").value = user.firstName;
     document.getElementById("selectionLastName").value = user.lastName;
     document.getElementById("selectionId").innerHTML = "Id: " + user.id;
+    document.getElementById("selectedUser").innerHTML = "Selected user: " + user.fullName;
   }
 
   function selectBook(book) {
@@ -139,15 +215,26 @@
     document.getElementById("selectionISBN").value = book.ISBN;
     document.getElementById("checkoutSelectionId").innerHTML = selectedBookId;
     document.getElementById("checkoutBookTitle").innerHTML = book.title;
+    document.getElementById("checkoutUserId").value = selectedUserId;
     var checkoutsRef = db.collection(CHECKOUT_COLLECTION);
-    checkoutsRef.where("bookId", "==", selectedBookId).where("checkInDate", "==", null).get().then(function (querySnapshot) {
+    checkoutsRef.where("bookId", "==", selectedBookId).get().then(function (querySnapshot) {
       var count = querySnapshot.docs.length;
       var remainingCopies = book.copies - count;
+      console.log("count: " + count + " remaining " + remainingCopies);
       document.getElementById("checkoutCopies").innerHTML = remainingCopies;
       if (remainingCopies == 0) {
-        document.getElementById("checkoutButton").disabled = true;
+        document.getElementById("checkoutButton").className = "disabledButton";
       } else {
-        document.getElementById("checkoutButton").disabled = false;
+        document.getElementById("checkoutButton").className = "createButton";
+      }
+    });
+    checkoutsRef.where("userId", "==", selectedUserId).where("bookId", "==", selectedBookId).get().then(function (querySnapshot) {
+      console.log("got: " + querySnapshot.docs.length);
+      if (querySnapshot.docs.length <= 0) {
+        document.getElementById("checkinButton").className = "disabledButton";
+        console.log("disabled: " + querySnapshot.docs.length);
+      } else {
+        document.getElementById("checkinButton").className = "createButton";
       }
     });
   }
@@ -167,23 +254,77 @@
     readUsers();
   }
 
+  function createUserArgs(firstName, lastName) {
+    var isTeacherChecked = Math.random() >= 0.9;
+    var id = Math.floor(Math.random() * 90000) + 10000;
+    id = "" + id;
+    db.collection(USER_COLLECTION).doc(id).set({
+        firstName: firstName,
+        lastName: lastName,
+        isTeacher: isTeacherChecked
+      })
+      .then(function (docRef) {
+        console.log("user written");
+      });
+    readUsers();
+  }
+
+  function createUser() {
+    var firstNameText = capitalizeFirstLetter(document.getElementById("firstName").value);
+    var lastNameText = capitalizeFirstLetter(document.getElementById("lastName").value);
+    var isTeacherChecked = document.getElementById("isTeacher").checked;
+    db.collection(USER_COLLECTION).doc().set({
+        firstName: firstNameText,
+        lastName: lastNameText,
+        isTeacher: isTeacherChecked
+      })
+      .then(function (docRef) {
+        console.log("user written");
+      });
+    readUsers();
+  }
+
+  function createBookArgs(title, author, genre, ISBN, pubdate, pages) {
+    var maximumCopies = 3;
+    var minimumCopies = 1;
+    var randomCopies = Math.floor(Math.random() * (maximumCopies - minimumCopies + 1)) + minimumCopies;
+    var ISBN = "" + ISBN;
+    db.collection(BOOK_COLLECTION).doc(ISBN).set({
+        title: title,
+        author: author,
+        genre: genre,
+        ISBN: ISBN,
+        pubdate: pubdate,
+        pages: pages,
+        copies: randomCopies
+      })
+      .then(function (docRef) {
+        console.log("book written");
+      });
+    //    readBooks();
+  }
+
   function createBook() {
     var bookTitleText = document.getElementById("bookTitle").value;
     var bookAuthorText = document.getElementById("bookAuthor").value;
     var bookGenreText = document.getElementById("bookGenre").value;
     var bookISBNText = document.getElementById("bookISBN").value;
+    var pubdate = document.getElementById("bookPubdate").value;
+    var pagesText = document.getElementById("bookPages").value;
     var bookCopiesText = document.getElementById("bookCopies").value;
     db.collection(BOOK_COLLECTION).doc().set({
         title: bookTitleText,
         author: bookAuthorText,
         genre: bookGenreText,
         ISBN: bookISBNText,
+        pubdate: pubdateText,
+        pages: pagesText,
         copies: bookCopiesText
       })
       .then(function (docRef) {
         console.log("book written");
       });
-    readBooks();
+    readBooks("");
   }
 
   function makeFineHeader() {
@@ -302,7 +443,7 @@
     var isTeacher = document.createElement("th");
     isTeacher.className = "isTeacher";
     isTeacher.innerHTML = "Teacher or Student";
-    
+
     var id = document.createElement("th");
     id.className = "id";
     id.innerHTML = "Id";
@@ -331,7 +472,7 @@
     if (user.isTeacher) {
       isTeacher.innerHTML = "Teacher";
     }
-    
+
     var id = document.createElement("td");
     id.className = "id";
     id.innerHTML = user.id;
@@ -373,10 +514,20 @@
     isbn.className = "isbn";
     isbn.innerHTML = "ISBN";
 
+    var pubdate = document.createElement("th");
+    pubdate.className = "pubdate";
+    pubdate.innerHTML = "Publish Date";
+
+    var pages = document.createElement("th");
+    pages.className = "pages";
+    pages.innerHTML = "Pages";
+
     var row = document.createElement('tr');
     row.appendChild(title);
     row.appendChild(author);
     row.appendChild(genre);
+    row.appendChild(pubdate);
+    row.appendChild(pages);
     row.appendChild(isbn);
 
     return row;
@@ -399,10 +550,20 @@
     isbn.className = "isbn";
     isbn.innerHTML = book.ISBN;
 
+    var pubdate = document.createElement("td");
+    pubdate.className = "pubdate";
+    pubdate.innerHTML = book.pubdate;
+
+    var pages = document.createElement("td");
+    pages.className = "pages";
+    pages.innerHTML = book.pages;
+
     var row = document.createElement('tr');
     row.appendChild(title);
     row.appendChild(author);
     row.appendChild(genre);
+    row.appendChild(pubdate);
+    row.appendChild(pages);
     row.appendChild(isbn);
 
     if (book.id === selectedBookId) {
@@ -415,7 +576,7 @@
       selectBook(book);
       onBookTextChanged();
       console.log("selected book: " + book.title + " with id: " + book.id);
-      readBooks();
+      readBooks("");
     }
     return row;
   }
@@ -446,6 +607,53 @@
     readUsers();
   }
 
+  function checkin() {
+    var checkinUserId = selectedUserId;
+    var selectedUserName = "";
+    var promise = db.collection(CHECKOUT_COLLECTION).where("bookId", "==", selectedBookId).where("userId", "==", selectedUserId)
+      .get();
+    promise = promise.then((querySnapshot) => {
+      var lastCheckout;
+      querySnapshot.forEach((checkout) => lastCheckout = checkout);
+      return lastCheckout;
+    });
+    promise.then((checkoutDoc) => {
+      var result = db.runTransaction(function (transaction) {
+        var checkoutRef = db.collection(CHECKOUT_COLLECTION).doc(checkoutDoc.id);
+        transaction.get(checkoutRef).then((unused) => {
+          transaction.update(checkoutRef, {
+            checkinDate: new Date()
+          });
+        });
+      }).then(function () {
+        console.log("Transaction successfully committed!");
+        readBooks(selectedBookId);
+      }).catch(function (error) {
+        console.log("Transaction failed: ", error);
+      });
+    });
+  }
+
+  /*
+        return db.runTransaction(function(transaction) {
+	return transaction.get(postDocRef).then(function(postDoc) {
+        var post = postDoc.data();
+        var newClicks = post.clicks + 1;
+	var newScore = newClicks / (1 + hoursDifference(post.date));
+        transaction.update(
+          postDocRef,
+          {
+            clicks: newClicks,
+            score: newScore
+          });
+	return newClicks;
+      });
+    }).then(function() {
+      console.log("Transaction successfully committed!");
+      readPosts();
+    }).catch(function(error) {
+    */
+
   function deleteBook() {
     if (!selectedBookId) {
       return;
@@ -455,7 +663,7 @@
     }).catch(function (error) {
       console.error("Error removing document: ", error);
     });
-    readBooks();
+    readBooks("");
   }
 
   function onUserTextChanged() {
@@ -464,21 +672,24 @@
     var isTeacherInput = document.getElementById("isTeacher").value;
     if (firstNameInput || lastNameInput || isTeacherInput) {
       enableUserButtons();
-      console.log("enabled buttons");
     } else {
       disableUserButtons();
-      console.log("disabled buttons");
     }
     readUsers();
   }
 
   function onBookTextChanged() {
-    if (selectedBookId) {
+    var bookTitleText = document.getElementById("bookTitle").value;
+    var bookAuthorText = document.getElementById("bookAuthor").value;
+    var bookGenreText = document.getElementById("bookGenre").value;
+    var bookISBNText = document.getElementById("bookISBN").value;
+    var bookCopiesText = document.getElementById("bookCopies").value;
+    if (bookTitleText || bookAuthorText || bookGenreText || bookISBNText || bookCopiesText) {
       enableBookButtons();
     } else {
       disableBookButtons();
     }
-    readBooks();
+    readBooks("");
   }
 
   function enableUserButtons() {

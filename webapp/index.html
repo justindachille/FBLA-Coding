@@ -7,6 +7,7 @@
   <script src="user.js"></script>
   <script src="book.js"></script>
   <script src="checkout.js"></script>
+  <script src="data.json"></script>
   <script src="main.js"></script>
 </head>
 
@@ -14,10 +15,12 @@
   <div>
     <span id="logo">Library</span>
   </div>
-
+  <div>
+    <h2 id="selectedUser">Selected user: </h2>
+  </div>
   <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'Users');readUsers()" id="defaultOpen">Users</button>
-    <button class="tablinks" onclick="openTab(event, 'Books');readBooks()">Books</button>
+    <button class="tablinks" onclick="openTab(event, 'Books');readAllBooks()">Books</button>
     <button class="tablinks" onclick="openTab(event, 'Reports');makeReports()">Reports</button>
   </div>
 
@@ -61,15 +64,7 @@
               <div>Author: <input type="text" id="selectionAuthor"></div>
               ISBN: <input type="text" id="selectionISBN"> <br>
               <div id="checkoutSelectionId">Selection ID: </div>
-              <button id="editButton" onclick="readUsers()">Edit</button>
-            </form>
-            <h2>Checkout book</h2>
-            <form id="checkoutForm" onsubmit="return false">
-              User Id: <input type="text" id="checkoutUserId"> <br> Selected Book:
-              <div id="checkoutBookTitle">Test</div>
-              Copies available:
-              <div id="checkoutCopies"></div> <br>
-              <button id="checkoutButton" onclick="checkout()">Checkout</button>
+              <a class="createButton" id="editButton" onclick="readUsers()">Edit</a>
             </form>
           </div>
         </td>
@@ -78,12 +73,32 @@
             <h2>Create book</h2>
             <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
             <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
-            <div class="hidden"><input type="text" id="bookTitle" oninput="onBookTextChanged" value="" size="30" maxlength="80" placeholder="Title"></div>
+            <div class="hidden"><input type="text" id="bookTitle" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Title"></div>
             <div class="hidden"><input type="text" id="bookAuthor" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Author"></div>
             <div class="hidden"><input type="text" id="bookGenre" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Genre"></div>
-            <div class="hidden"><input type="text" id="bookISBN" oninput="onBookTextChanged" value="" size="30" maxlength="80" placeholder="ISBN"></div>
-            <div class="hidden"><input type="text" id="bookCopies" oninput="onBookTextChanged" value="" size="30" maxlength="80" placeholder="Copies"></div>
-            <button onclick="readBooks()">Refresh</button>
+            <div class="hidden"><input type="text" id="bookISBN" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="ISBN"></div>
+            <div class="hidden"><input type="text" id="bookCopies" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Copies"></div>
+            <a class="createButton" onclick="readAllBooks()">Refresh</a>
+          </div>
+        </td>
+        <td>
+          <div class="inputTable">
+            <h2>Checkout</h2>
+            <form id="checkoutForm" onsubmit="return false">
+              User Id: <input type="text" id="checkoutUserId"> <br> 
+              Selected Book: <div id="checkoutBookTitle"></div>
+              Copies available: <div id="checkoutCopies"></div> <br>
+
+              <a class="createButton" id="checkoutButton" onclick="checkout()">Checkout</a>
+              <a class="createButton" id="checkinButton" onclick="checkin()">Checkin</a>
+            </form>
+          </div>
+        </td>
+        <td>
+          <div class="inputTable">
+            <h2>Search books</h2>
+            <div class="hidden"><input type="text" id="bookSearch" value="" placeholder="Search Books"></div>
+            <a onclick="searchBooks()" class="createButton">Search</a>
           </div>
         </td>
       </tr>
