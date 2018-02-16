@@ -33,7 +33,7 @@
             <form id="editForm" onsubmit="return false">
               First name: <input type="text" id="selectionFirstName"> <br> Last name: <input type="text" id="selectionLastName"> <br>
               <div id="selectionId"></div>
-              <a id="editButton" onclick="readUsers()" class="createButton">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
+              <a id="editUserButton" onclick="readUsers()" class="createButton">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
             </form>
           </div>
         </td>
@@ -62,23 +62,21 @@
             <form id="editForm" onsubmit="return false">
               <div>Title: <input type="text" id="selectionTitle"></div>
               <div>Author: <input type="text" id="selectionAuthor"></div>
-              ISBN: <input type="text" id="selectionISBN"> <br>
-              <div id="checkoutSelectionId">Selection ID: </div>
-              <a class="createButton" id="editButton" onclick="readUsers()">Edit</a>
+              Copies: <input type="text" id="selectionCopies"> <br>
+              <a class="createButton" id="editBookButton" onclick="readUsers()">Edit</a>
             </form>
           </div>
         </td>
         <td>
           <div class="inputTable">
             <h2>Create book</h2>
-            <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
-            <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
             <div class="hidden"><input type="text" id="bookTitle" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Title"></div>
             <div class="hidden"><input type="text" id="bookAuthor" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Author"></div>
             <div class="hidden"><input type="text" id="bookGenre" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Genre"></div>
             <div class="hidden"><input type="text" id="bookISBN" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="ISBN"></div>
             <div class="hidden"><input type="text" id="bookCopies" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Copies"></div>
-            <a class="createButton" onclick="readAllBooks()">Refresh</a>
+            <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
+            <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
           </div>
         </td>
         <td>
@@ -87,7 +85,7 @@
             <form id="checkoutForm" onsubmit="return false">
               User Id: <input type="text" id="checkoutUserId"> <br> 
               Selected Book: <div id="checkoutBookTitle"></div>
-              Copies available: <div id="checkoutCopies"></div> <br>
+              Copies available: <span id="checkoutCopies"></span> <br>
 
               <a class="createButton" id="checkoutButton" onclick="checkout()">Checkout</a>
               <a class="createButton" id="checkinButton" onclick="checkin()">Checkin</a>

@@ -1,7 +1,8 @@
 class Checkout {
-  constructor (userId, userFullName, bookId, bookTitle, checkOutDate, id) {
+  constructor (userId, userFullName, userIsTeacher, bookId, bookTitle, checkOutDate, id) {
     this._userId = userId;
     this._userFullName = userFullName;
+    this._userIsTeacher = userIsTeacher;
     this._bookId = bookId;
     this._bookTitle = bookTitle;
     this._checkOutDate = checkOutDate;
@@ -22,6 +23,14 @@ class Checkout {
   
   set userFullName (newUserFullName) {
     this._userFullName = newUserFullName;
+  }
+  
+  get userIsTeacher () {
+    return this._userIsTeacher;
+  }
+  
+  set userIsTeacher (newUserIsTeacher) {
+    this._userIsTeacher = newUserIsTeacher;
   }
   
   get bookId () {

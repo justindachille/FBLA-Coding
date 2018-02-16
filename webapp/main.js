@@ -24,17 +24,22 @@
   firebase.initializeApp(config);
   // Initialize Cloud Firestore through Firebase
   var db = firebase.firestore();
-  var CHECKOUT_PERIOD = 14;
+  var STUDENT_CHECKOUT_PERIOD = 14;
+  var TEACHER_CHECKOUT_PERIOD = 90;
+  var MAX_STUDENT_CHECKOUTS = 3;
+  var MAX_TEACHER_CHECKOUTS = 10;
   var MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
   var OVERDUE_COST_PER_DAY = 0.18;
   var USER_MAX_READ = 30;
-  var BOOK_MAX_READ = 5;
+  var BOOK_MAX_READ = 50;
   var USER_COLLECTION = "users";
   var BOOK_COLLECTION = "books";
   var CHECKOUT_COLLECTION = "checkouts";
   var selectedUserId = "";
   var selectedBookId = "";
   var selectedBookTitle = "";
+  var selectedBook;
+  var selectedUser;
 
   function importData() {
     createBook(title, author, genre, ISBN, pubdate, pages)
@@ -80,7 +85,8 @@
   window.addEventListener("DOMContentLoaded", function () {
     var form = document.getElementById("editForm");
 
-    document.getElementById("editButton").addEventListener("click", function () {
+    // Called when the edit user button is clicked
+    document.getElementById("editUserButton").addEventListener("click", function () {
       var newFirstName = document.getElementById("selectionFirstName").value;
       var newLastName = document.getElementById("selectionLastName").value;
       var userDocRef = db.collection(USER_COLLECTION).doc(selectedUserId);
@@ -107,11 +113,42 @@
         console.log("Transaction failed: ", error);
       })
     });
+
+    // Called when the edit book button is clicked
+    document.getElementById("editBookButton").addEventListener("click", function () {
+      var newTitle = document.getElementById("selectionTitle").value;
+      var newAuthor = document.getElementById("selectionAuthor").value;
+      var newCopies = document.getElementById("selectionCopies").value;
+      var bookDocRef = db.collection(BOOK_COLLECTION).doc(selectedBookId);
+      console.log("Book ID: " + selectedBookId);
+      return db.runTransaction(function (transaction) {
+        return transaction.get(bookDocRef).then(function (bookDoc) {
+          if (!bookDoc) {
+            throw "Document does not exist!"
+          }
+          if (!bookDoc.exists) {
+            throw "Document does not exist!"
+          }
+          //          var user = userDoc.data();
+          transaction.update(
+            bookDocRef, {
+              title: newTitle,
+              author: newAuthor,
+              copies: newCopies
+            });
+          return newTitle;
+        });
+      }).then(function () {
+        console.log("Transaction successfully committed!");
+      }).catch(function (error) {
+        console.log("Transaction failed: ", error);
+      })
+    });
   });
 
   function makeReports() {
     makeWeeklyReport();
-    makeFineReport();
+    //    makeFineReport();
   }
 
   function makeFineReport() {
@@ -136,21 +173,50 @@
 
   function makeWeeklyReport() {
     var checkoutsRef = db.collection(CHECKOUT_COLLECTION);
-    var dueDate = addDays(new Date(), -CHECKOUT_PERIOD);
-    //.where("checkOutDate", ">", dueDate)
-    checkoutsRef.where("checkOutDate", ">", dueDate).get().then(function (querySnapshot) {
-      var checkoutList = document.querySelector("#checkoutList");
-      checkoutList.innerHTML = "";
-      var table = document.createElement("table");
-      table.className = "table";
-      table.appendChild(makeCheckoutHeader());
-      checkoutList.appendChild(table);
-      querySnapshot.forEach((doc) => {
-        var checkout = doc.data();
-        var newCheckout = new Checkout(checkout.userId, checkout.userFullName, checkout.bookId, checkout.bookTitle, checkout.checkOutDate, doc.id);
-        table.appendChild(makeCheckoutHtml(newCheckout));
+    //    var dueDate = addDays(new Date(), -CHECKOUT_PERIOD);
+    checkoutsRef
+      .get()
+      .then(function (querySnapshot) {
+        //Create each table for reports and fines
+        var fineCheckoutList = document.querySelector("#fineList");
+        fineCheckoutList.innerHTML = "";
+        var fineTable = document.createElement("table");
+        fineTable.className = "table";
+        fineTable.appendChild(makeFineHeader());
+        fineCheckoutList.appendChild(fineTable);
+
+        var weeklyCheckoutList = document.querySelector("#checkoutList");
+        weeklyCheckoutList.innerHTML = "";
+        var weeklyTable = document.createElement("table");
+        weeklyTable.className = "table";
+        weeklyTable.appendChild(makeCheckoutHeader());
+        weeklyCheckoutList.appendChild(weeklyTable);
+        querySnapshot.forEach((doc) => {
+          var checkout = doc.data();
+          var newCheckout = new Checkout(checkout.userId, checkout.userFullName, checkout.userIsTeacher, checkout.bookId, checkout.bookTitle, checkout.checkOutDate, doc.id);
+          // If user is teacher, use teacher checkout period and fine, else use student checkout period and fine
+          if (checkout.userIsTeacher) {
+            var dueDate = addDays(new Date(), TEACHER_CHECKOUT_PERIOD);
+            if (checkout.checkOutDate < dueDate) {
+              weeklyTable.appendChild(makeCheckoutHtml(checkout));
+            } else {
+              fineTable.appendChild(makeFineHtml(checkout));
+            }
+          } else {
+            var dueDate = addDays(new Date(), STUDENT_CHECKOUT_PERIOD);
+            console.log("dueDate: " + dueDate);
+            console.log("checkoutDate: " + checkout.checkOutDate);
+            if (checkout.checkOutDate < dueDate) {
+              console.log("less than");
+              weeklyTable.appendChild(makeCheckoutHtml(checkout));
+            } else {
+              console.log("greater than");
+              fineTable.appendChild(makeFineHtml(checkout));
+            }
+          }
+          //        table.appendChild(makeCheckoutHtml(newCheckout));
+        });
       });
-    });
   }
 
   function readUsers() {
@@ -202,6 +268,7 @@
     });
   }
 
+  // Called when a user is selected
   function selectUser(user) {
     document.getElementById("selectionFirstName").value = user.firstName;
     document.getElementById("selectionLastName").value = user.lastName;
@@ -209,34 +276,84 @@
     document.getElementById("selectedUser").innerHTML = "Selected user: " + user.fullName;
   }
 
+  // Called when a book is selected
   function selectBook(book) {
     document.getElementById("selectionTitle").value = book.title;
     document.getElementById("selectionAuthor").value = book.author;
-    document.getElementById("selectionISBN").value = book.ISBN;
-    document.getElementById("checkoutSelectionId").innerHTML = selectedBookId;
+    document.getElementById("selectionCopies").value = book.copies;
     document.getElementById("checkoutBookTitle").innerHTML = book.title;
     document.getElementById("checkoutUserId").value = selectedUserId;
     var checkoutsRef = db.collection(CHECKOUT_COLLECTION);
-    checkoutsRef.where("bookId", "==", selectedBookId).get().then(function (querySnapshot) {
-      var count = querySnapshot.docs.length;
-      var remainingCopies = book.copies - count;
-      console.log("count: " + count + " remaining " + remainingCopies);
-      document.getElementById("checkoutCopies").innerHTML = remainingCopies;
-      if (remainingCopies == 0) {
-        document.getElementById("checkoutButton").className = "disabledButton";
+    // Get number of books checked out
+    checkoutsRef
+      .where("userId", "==", selectedUserId)
+      .where("checkinDate", "==", "null")
+      .get()
+      .then(function(querySnapshot) {
+      var numBooksCheckedOut = querySnapshot.docs.length;
+      console.log("numBooksCheckedOut: " + numBooksCheckedOut);
+      document.getElementById("checkinButton").className = "createButton";
+      document.getElementById("checkinButton").disabled = false;      
+      if (selectedUser.isTeacher) {
+        if (numBooksCheckedOut >= MAX_TEACHER_CHECKOUTS) {
+          document.getElementById("checkoutButton").className = "disabledButton";
+          document.getElementById("checkoutButton").disabled = true;          
+          return false;
+        }
       } else {
-        document.getElementById("checkoutButton").className = "createButton";
+        if (numBooksCheckedOut >= MAX_STUDENT_CHECKOUTS) {
+          console.log("user has checked out more than max number!");
+          document.getElementById("checkoutButton").className = "disabledButton";
+          document.getElementById("checkoutButton").disabled = true;          
+          return false;
+        }
       }
-    });
-    checkoutsRef.where("userId", "==", selectedUserId).where("bookId", "==", selectedBookId).get().then(function (querySnapshot) {
-      console.log("got: " + querySnapshot.docs.length);
-      if (querySnapshot.docs.length <= 0) {
-        document.getElementById("checkinButton").className = "disabledButton";
-        console.log("disabled: " + querySnapshot.docs.length);
-      } else {
-        document.getElementById("checkinButton").className = "createButton";
+      return true;
+    }).then(function(shouldContinue) {
+      if (!shouldContinue) {
+        return false;
       }
-    });
+      checkoutsRef
+        .where("bookId", "==", selectedBookId)
+        .where("checkinDate", "==", "null")
+        .get()
+        .then(function (querySnapshot) {
+          console.log("selectedBookid: " + selectedBookId);
+          var numCheckouts = querySnapshot.docs.length;
+          var remainingCopies = book.copies - numCheckouts;
+          console.log("numCheckouts: " + numCheckouts + " remaining " + remainingCopies);
+          document.getElementById("checkoutCopies").innerHTML = remainingCopies + " out of " + book.copies;
+          if (remainingCopies == 0) {
+            document.getElementById("checkoutButton").className = "disabledButton";
+            document.getElementById("checkoutButton").disabled = true;
+          } else {
+            document.getElementById("checkoutButton").className = "createButton";
+            document.getElementById("checkoutButton").disabled = false;
+          }
+        });
+        return true;
+      }).then(function (shouldContinue) {
+        if (!shouldContinue) {
+          return false;
+        }
+        // Check to see if user has the selected book checked out
+        checkoutsRef
+          .where("userId", "==", selectedUserId)
+          .where("bookId", "==", selectedBookId)
+          .where("checkinDate", "==", "null")
+          .get()
+          .then(function (querySnapshot) {
+            console.log("user has checked out: " + querySnapshot.docs.length);
+            if (querySnapshot.docs.length <= 0) {
+              document.getElementById("checkinButton").className = "disabledButton";
+              document.getElementById("checkinButton").disabled = true;
+              console.log("disabled: " + querySnapshot.docs.length);
+            } else {
+              document.getElementById("checkinButton").className = "createButton";
+              document.getElementById("checkinButton").disabled = false;
+            }
+          });
+      });
   }
 
   function createUser() {
@@ -368,11 +485,21 @@
 
     var date = document.createElement("td");
     date.className = "date";
-    var checkInDate = addDays(checkout.checkOutDate, CHECKOUT_PERIOD);
-    //    checkInDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
-    var timeDifference = checkInDate - (new Date());
-    var daysOverdue = Math.abs(Math.floor(timeDifference / MILLIS_PER_DAY));
-    date.innerHTML = daysOverdue;
+
+    // Check if user is teacher or student to calculate period
+    if (checkout.userIsTeacher) {
+      var checkinDate = addDays(checkout.checkOutDate, TEACHER_CHECKOUT_PERIOD);
+      //    checkinDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
+      var timeDifference = checkinDate - (new Date());
+      var daysOverdue = Math.abs(Math.floor(timeDifference / MILLIS_PER_DAY));
+      date.innerHTML = daysOverdue;
+    } else {
+      var checkinDate = addDays(checkout.checkOutDate, STUDENT_CHECKOUT_PERIOD);
+      //    checkinDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
+      var timeDifference = checkinDate - (new Date());
+      var daysOverdue = Math.abs(Math.floor(timeDifference / MILLIS_PER_DAY));
+      date.innerHTML = daysOverdue;
+    }
 
     var fine = document.createElement("td");
     fine.classname = "fine";
@@ -401,6 +528,7 @@
     date.className = "date";
     date.innerHTML = "Days until due";
     var row = document.createElement('tr');
+
     row.appendChild(bookTitle);
     row.appendChild(username);
     row.appendChild(date);
@@ -416,12 +544,22 @@
     username.className = "username";
     username.innerHTML = checkout.userFullName;
 
-    var date = document.createElement("td");
-    date.className = "date";
-    var checkInDate = addDays(checkout.checkOutDate, CHECKOUT_PERIOD);
-    //    checkInDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
-    var timeDifference = checkInDate - (new Date());
-    date.innerHTML = Math.floor(timeDifference / MILLIS_PER_DAY);
+    // Check if user is teacher or student
+    if (checkout.userIsTeacher) {
+      var date = document.createElement("td");
+      date.className = "date";
+      var checkinDate = addDays(checkout.checkOutDate, TEACHER_CHECKOUT_PERIOD);
+      //    checkinDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
+      var timeDifference = checkinDate - (new Date());
+      date.innerHTML = Math.floor(timeDifference / MILLIS_PER_DAY);
+    } else {
+      var date = document.createElement("td");
+      date.className = "date";
+      var checkinDate = addDays(checkout.checkOutDate, STUDENT_CHECKOUT_PERIOD);
+      //    checkinDate.setDate(checkout.checkOutDate + CHECKOUT_PERIOD);
+      var timeDifference = checkinDate - (new Date());
+      date.innerHTML = Math.floor(timeDifference / MILLIS_PER_DAY);
+    }
 
     var row = document.createElement('tr');
     row.appendChild(bookTitle);
@@ -487,8 +625,10 @@
       row.className = "tableSelected";
     }
 
+    // Called when row is clicked    
     row.onclick = function () {
       selectedUserId = user.id;
+      selectedUser = user;
       selectUser(user);
       onUserTextChanged();
       console.log(selectedUserId);
@@ -522,6 +662,7 @@
     pages.className = "pages";
     pages.innerHTML = "Pages";
 
+    // Called when row is clicked
     var row = document.createElement('tr');
     row.appendChild(title);
     row.appendChild(author);
@@ -570,9 +711,11 @@
       row.classList.add("tableSelected");
     }
 
+    // Called when row is clicked
     row.onclick = function () {
       selectedBookId = book.id;
       selectedBookTitle = book.title;
+      selectedBook = book;
       selectBook(book);
       onBookTextChanged();
       console.log("selected book: " + book.title + " with id: " + book.id);
@@ -581,7 +724,11 @@
     return row;
   }
 
+  // Called when checkout button is pressed.
   async function checkout() {
+    if (document.getElementById("checkoutButton").disabled) {
+      return;
+    }
     var checkoutUserId = document.getElementById("checkoutUserId").value;
     var selectedUserName = "";
     var promise = db.collection(USER_COLLECTION).doc(checkoutUserId).get().then(function (doc) {
@@ -589,70 +736,73 @@
       var newUser = new User(user.firstName, user.lastName, user.isTeacher, doc.id);
       console.log(newUser.fullName);
       selectedUserName = newUser.fullName;
+      selectedUser = newUser;
+      console.log("selectedUserName: " + selectedUserName);
     });
     promise.then(function () {
       console.log("asynç " + selectedUserName);
-    });
-    console.log("checking out with book id: " + selectedBookId);
-    db.collection(CHECKOUT_COLLECTION).doc().set({
+      console.log("checking out with book ID: " + selectedBookId);
+      db.collection(CHECKOUT_COLLECTION).doc().set({
         userId: checkoutUserId,
         userFullName: selectedUserName,
+        userIsTeacher: selectedUser.isTeacher,
         bookId: selectedBookId,
         bookTitle: selectedBookTitle,
+        checkinDate: "null",
         checkOutDate: new Date()
       })
-      .then(function (docRef) {
-        console.log("book checked out!");
-      });
-    readUsers();
+    }).then(function (docRef) {
+      console.log("book checked out!");
+      readBooks(selectedBookId);
+      selectBook(selectedBook);
+    });
   }
 
+  // Called when checkin button is pressed.
   function checkin() {
+    if (document.getElementById("checkinButton").disabled) {
+      return;
+    }
     var checkinUserId = selectedUserId;
     var selectedUserName = "";
-    var promise = db.collection(CHECKOUT_COLLECTION).where("bookId", "==", selectedBookId).where("userId", "==", selectedUserId)
-      .get();
-    promise = promise.then((querySnapshot) => {
-      var lastCheckout;
-      querySnapshot.forEach((checkout) => lastCheckout = checkout);
-      return lastCheckout;
-    });
-    promise.then((checkoutDoc) => {
-      var result = db.runTransaction(function (transaction) {
-        var checkoutRef = db.collection(CHECKOUT_COLLECTION).doc(checkoutDoc.id);
-        transaction.get(checkoutRef).then((unused) => {
+    var lastCheckoutId;
+
+    // Get ID of one of the checked out books.
+    var promise = db.collection(CHECKOUT_COLLECTION)
+      .where("bookId", "==", selectedBookId)
+      .where("userId", "==", selectedUserId)
+      .where("checkinDate", "==", "null")
+      .get()
+      .then((querySnapshot) => {
+        var lastCheckout;
+        querySnapshot.forEach(function (checkout) {
+          lastCheckout = checkout;
+          console.log("checkout id: " + checkout.id);
+        });
+        console.log("lastCheckoutId: " + lastCheckout);
+        lastCheckoutId = lastCheckout.id;
+        return lastCheckout.id;
+      });
+
+    // Use checkout ID to add a checkin date.
+    promise.then((checkoutId) => {
+      db.runTransaction(function (transaction) {
+        var checkoutRef = db.collection(CHECKOUT_COLLECTION).doc(lastCheckoutId);
+        return transaction.get(checkoutRef).then((unused) => {
           transaction.update(checkoutRef, {
             checkinDate: new Date()
           });
         });
+
       }).then(function () {
         console.log("Transaction successfully committed!");
         readBooks(selectedBookId);
+        selectBook(selectedBook);
       }).catch(function (error) {
         console.log("Transaction failed: ", error);
       });
     });
   }
-
-  /*
-        return db.runTransaction(function(transaction) {
-	return transaction.get(postDocRef).then(function(postDoc) {
-        var post = postDoc.data();
-        var newClicks = post.clicks + 1;
-	var newScore = newClicks / (1 + hoursDifference(post.date));
-        transaction.update(
-          postDocRef,
-          {
-            clicks: newClicks,
-            score: newScore
-          });
-	return newClicks;
-      });
-    }).then(function() {
-      console.log("Transaction successfully committed!");
-      readPosts();
-    }).catch(function(error) {
-    */
 
   function deleteBook() {
     if (!selectedBookId) {
