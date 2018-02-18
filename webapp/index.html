@@ -19,26 +19,97 @@
     <h2 id="selectedUser">Selected user: </h2>
   </div>
   <div class="tab">
-    <button class="tablinks" onclick="openTab(event, 'Users');readUsers()" id="defaultOpen">Users</button>
-    <button class="tablinks" onclick="openTab(event, 'Books');readAllBooks()">Books</button>
-    <button class="tablinks" onclick="openTab(event, 'Reports');makeReports()">Reports</button>
+    <button class="tablinks" onclick="openTab(event, 'Books');readAllBooks()" id="defaultOpen">Books</button>
+    <button class="tablinks" onclick="openTab(event, 'Users');readUsers()">Users</button>
+    <button class="tablinks" onclick="openTab(event, 'Reports');makeAllReports()">Reports</button>
   </div>
 
+  <div id="Books" class="tabcontent">
+    <table>
+      <tr>
+        <td>
+          <div class="selectorBox" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookEdit">
+            <h2>Edit book</h2>
+            <div class="help-tip" id="bookEditHelpTip">
+              <p>Select a book to edit its attributes here</p>
+            </div>              
+            <form id="editForm" onsubmit="return false">
+              <div>Title: <input oninput="onBookTextChanged()" type="text" id="selectionTitle"></div>
+              <div>Author: <input oninput="onBookTextChanged()" type="text" id="selectionAuthor"></div>
+              Copies: <input oninput="onBookTextChanged()" type="text" id="selectionCopies"> <br>
+              <a class="createButton" id="editBookButton" onclick="readUsers()">Edit</a>
+            </form>
+          </div>
+        </td>
+        <td>
+          <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookCreate">
+            <h2>Create book</h2>
+            <div class="help-tip" id="bookCreateHelpTip">
+              <p>Use this section to create a new book</p>
+            </div>             
+            <div class="hidden"><input type="text" id="bookTitle" oninput="onBookTextChanged()"  value="" size="30" maxlength="80" placeholder="Title"></div>
+            <div class="hidden"><input type="text" id="bookAuthor" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Author"></div>
+            <div class="hidden"><input type="text" id="bookGenre" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Genre"></div>
+            <div class="hidden"><input type="text" id="bookISBN" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="ISBN"></div>
+            <div class="hidden"><input type="text" id="bookCopies" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Copies"></div>
+            <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
+            <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
+          </div>
+        </td>
+        <td>
+          <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookCheckout">
+            <div class="help-tip" id="bookCheckoutHelpTip">
+              <p id="bookCheckoutHelpText"></p>
+            </div>                
+            <h2>Checkout</h2>
+            <form id="checkoutForm" onsubmit="return false">
+              User Id: <input type="text" id="checkoutUserId"> <br> 
+              Selected Book: <div id="checkoutBookTitle"></div>
+              Copies available: <span id="checkoutCopies"></span> <br>
+
+              <a class="createButton" id="checkoutButton" onclick="checkout()">Checkout</a>
+              <a class="createButton" id="checkinButton" onclick="checkin()">Checkin</a>
+            </form>
+          </div>
+        </td>
+        <td>
+          <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookSearch">
+            <div class="help-tip" id="bookSearchHelpTip">
+              <p>Search any field of the book</p>
+            </div>             
+            <h2>Search books</h2>
+            <div class="hidden"><input type="text" id="bookSearch" value="" placeholder="Search Books"></div>
+            <a onclick="searchBooks()" class="createButton">Search</a>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <div id="bookList" class="list"> </div>
+  </div>
+  
   <div id="Users" class="tabcontent">
     <table>
       <tr>
         <td>
-          <div id="selectorBox">
-            <h2>Edit User</h2>
+          <div class="selectorBox" onmouseover="userHelp(this);" onmouseout="userHelp(this);" id="userEdit">
+            <div class="help-tip" id="userEditHelpTip">
+              <p id="bookCheckoutHelpText">Select a user to edit its attributes here</p>
+            </div>                
+            <h2>Edit User</h2>          
             <form id="editForm" onsubmit="return false">
-              First name: <input type="text" id="selectionFirstName"> <br> Last name: <input type="text" id="selectionLastName"> <br>
+              First name: <input type="text" id="selectionFirstName"> <br>
+              Last name: <input type="text" id="selectionLastName"> <br>
+              Teacher?: <input type="checkbox" id="selectionIsTeacher" <br>
               <div id="selectionId"></div>
               <a id="editUserButton" onclick="readUsers()" class="createButton">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
             </form>
           </div>
         </td>
         <td>
-          <div class="inputTable">
+          <div class="inputTable" onmouseover="userHelp(this);" onmouseout="userHelp(this);" id="userCreate">
+            <div class="help-tip" id="userCreateHelpTip">
+              <p id="bookCheckoutHelpText">Use this to create a new user</p>
+            </div>               
             <h2> Create User</h2>
             <div><input type="text" id="firstName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
             <div><input type="text" id="lastName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
@@ -53,58 +124,12 @@
     <div id="userList" class="list"> </div>
   </div>
 
-  <div id="Books" class="tabcontent">
-    <table>
-      <tr>
-        <td>
-          <div id="selectorBox">
-            <h2>Edit book</h2>
-            <form id="editForm" onsubmit="return false">
-              <div>Title: <input type="text" id="selectionTitle"></div>
-              <div>Author: <input type="text" id="selectionAuthor"></div>
-              Copies: <input type="text" id="selectionCopies"> <br>
-              <a class="createButton" id="editBookButton" onclick="readUsers()">Edit</a>
-            </form>
-          </div>
-        </td>
-        <td>
-          <div class="inputTable">
-            <h2>Create book</h2>
-            <div class="hidden"><input type="text" id="bookTitle" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Title"></div>
-            <div class="hidden"><input type="text" id="bookAuthor" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Author"></div>
-            <div class="hidden"><input type="text" id="bookGenre" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Genre"></div>
-            <div class="hidden"><input type="text" id="bookISBN" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="ISBN"></div>
-            <div class="hidden"><input type="text" id="bookCopies" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Copies"></div>
-            <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
-            <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
-          </div>
-        </td>
-        <td>
-          <div class="inputTable">
-            <h2>Checkout</h2>
-            <form id="checkoutForm" onsubmit="return false">
-              User Id: <input type="text" id="checkoutUserId"> <br> 
-              Selected Book: <div id="checkoutBookTitle"></div>
-              Copies available: <span id="checkoutCopies"></span> <br>
-
-              <a class="createButton" id="checkoutButton" onclick="checkout()">Checkout</a>
-              <a class="createButton" id="checkinButton" onclick="checkin()">Checkin</a>
-            </form>
-          </div>
-        </td>
-        <td>
-          <div class="inputTable">
-            <h2>Search books</h2>
-            <div class="hidden"><input type="text" id="bookSearch" value="" placeholder="Search Books"></div>
-            <a onclick="searchBooks()" class="createButton">Search</a>
-          </div>
-        </td>
-      </tr>
-    </table>
-    <div id="bookList" class="list"> </div>
-  </div>
-
   <div id="Reports" class="tabcontent">
+    <div class="inputTable">
+      <h2>Search reports</h2>
+      <div class="hidden"><input type="text" id="reportSearch" value="" placeholder="Search Reports"></div>
+      <a onclick="searchReports()" class="createButton">Search</a>
+    </div>    
     <h2>Weekly Report</h2>
     <div id="checkoutList" class="list"> </div>
     <h2>Fine Report</h2>
@@ -113,6 +138,19 @@
 
   <script>
     document.getElementById("defaultOpen").click();
+    var bookCreateHelp = document.getElementById("bookCreateHelpTip");
+    var bookEditHelp = document.getElementById("bookEditHelpTip");
+    var bookCheckoutHelp = document.getElementById("bookCheckoutHelpTip");
+    
+    bookCreateHelp.style.visibility = "hidden";
+    bookEditHelp.style.visibility = "hidden";
+    bookCheckoutHelp.style.visibility = "hidden";
+    
+    var userEditHelp = document.getElementById("userEditHelpTip");
+    var userCreateHelp = document.getElementById("userCreateHelpTip");
+
+    userEditHelp.style.visibility = "hidden";
+    userCreateHelp.style.visibility = "hidden";
   </script>
 </body>
 

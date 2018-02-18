@@ -1,12 +1,21 @@
 class Checkout {
-  constructor (userId, userFullName, userIsTeacher, bookId, bookTitle, checkOutDate, id) {
+  constructor (userId, userFullName, userIsTeacher, bookId, bookTitle, checkoutDate, id) {
     this._userId = userId;
     this._userFullName = userFullName;
     this._userIsTeacher = userIsTeacher;
     this._bookId = bookId;
     this._bookTitle = bookTitle;
-    this._checkOutDate = checkOutDate;
+    this._checkoutDate = checkoutDate;
     this._id = id;
+  }
+  
+  containsString (queryString) {
+    var lowerCaseQueryString = queryString.toLowerCase();
+    return this._userId.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._userFullName.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._bookTitle.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._checkoutDate.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._id.toLowerCase().indexOf(lowerCaseQueryString) !== -1;
   }
   
   get userId () {
@@ -49,12 +58,12 @@ class Checkout {
     this._bookTitle = newBookTitle;
   }
   
-  get checkOutDate () {
-    return this._checkOutDate;
+  get checkoutDate () {
+    return this._checkoutDate;
   }
   
-  set checkOutDate (newCheckOutDate) {
-    this._checkOutDate = newCheckOutDate;
+  set checkoutDate (newCheckoutDate) {
+    this._checkoutDate = newCheckoutDate;
   }
   
   get id () {

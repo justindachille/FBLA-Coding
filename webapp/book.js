@@ -18,6 +18,7 @@ class Book {
         || this._ISBN.toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._pubdate.toLowerCase().indexOf(lowerCaseQueryString) !== -1;
   }
+  
   get title () {
     return this._title;
   }
