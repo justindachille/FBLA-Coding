@@ -14,6 +14,9 @@ Library is designed mainly around a horizontal table view, which allows the user
 ### Interactive Help
 Library offers an extensive help system based on the current user's desires with dynamic help tips to guide the user to their destination. For example, if a user is not selected before they navigated to checkout, the help tip will automatically update to alert the user.
 
+# Testing
+Library is equipped with QUnit tests that will allow the user to test various parts of the Library framework individually, and an integration test to make sure everything works together
+
 # Hardware Architecture
 The backend processing system for this database is centralized to a Cloud Firestore location, with all of the data automatically backed up and synced to the central database. 
 

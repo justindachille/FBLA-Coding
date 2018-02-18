@@ -11,12 +11,13 @@ class Book {
   }
   
   containsString (queryString) {
-    var lowerCaseQueryString = queryString.toLowerCase();
+    var lowerCaseQueryString = queryString.toString().toLowerCase();
     return this._title.toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._author.toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._genre.toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._ISBN.toLowerCase().indexOf(lowerCaseQueryString) !== -1
-        || this._pubdate.toLowerCase().indexOf(lowerCaseQueryString) !== -1;
+        || this._pages.toString().toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._pubdate.toLocaleDateString().toLowerCase().indexOf(lowerCaseQueryString) !== -1;
   }
   
   get title () {

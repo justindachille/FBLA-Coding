@@ -14,7 +14,7 @@ class Checkout {
     return this._userId.toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._userFullName.toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._bookTitle.toLowerCase().indexOf(lowerCaseQueryString) !== -1
-        || this._checkoutDate.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._checkoutDate.toLocaleDateString().toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._id.toLowerCase().indexOf(lowerCaseQueryString) !== -1;
   }
   

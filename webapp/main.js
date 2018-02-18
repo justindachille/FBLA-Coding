@@ -176,7 +176,6 @@ function makeReports(queryString) {
       var fineTable = document.createElement("table");
       fineTable.className = "table";
       fineTable.appendChild(makeFineHeader());
-      e
       fineCheckoutList.appendChild(fineTable);
 
       var weeklyCheckoutList = document.querySelector("#checkoutList");
