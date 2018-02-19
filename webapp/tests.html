@@ -12,28 +12,44 @@
 <!--  <script src="main.js"></script>-->
 
   <script>
-    function contains(a, b) {
-      return a.includes(b);
-    }
-    
     function testBookContainsString(query, bookInput) {
       return bookInput.containsString(query);
     }
     
-    QUnit.test("basic equate tests", function(assert) {
-      assert.ok(contains("abcd", "a"));
-      assert.ok(contains("abcd", "c"));
-      assert.ok(contains("abcd", "e"));
-    });
-    
     QUnit.test("book contains", function(assert) {
       var currentTime = new Date();
 //    constructor (title, author, genre, ISBN, pubdate, pages, copies, id)
-      var book = new Book("title", "author", "genre", "ISBN", currentTime, 500, 10, "a8RzndjRoJ6SrwT1odfD");
+      var book = new Book("title", "author", "genre", 12325313123, currentTime, 500, 10, "a8RzndjRoJ6SrwT1odfD");
       assert.ok(testBookContainsString("title", book));
+      assert.ok(testBookContainsString("author", book));
+      assert.ok(testBookContainsString("genre", book));
+      assert.ok(testBookContainsString(123, book));
       assert.ok(testBookContainsString(currentTime.toLocaleDateString(), book));
       assert.ok(testBookContainsString(500, book));
-    });    
+      assert.notOk(testBookContainsString("fail", book));
+    });
+    
+    function testCheckoutContainsString(query, checkoutInput) {
+      return checkoutInput.containsString(query);
+    }
+    
+    QUnit.test("checkout contains", function(assert) {
+      var currentTime = new Date();
+//    constructor (userId, userFullName, userIsTeacher, bookId, bookTitle, checkoutDate, id) {   
+      /*     var lowerCaseQueryString = queryString.toString().toLowerCase();
+    return this._userId.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._userFullName.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._bookTitle.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._checkoutDate.toLocaleDateString().toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._id.toLowerCase().indexOf(lowerCaseQueryString) !== -1;
+        */
+      var checkout = new Checkout(123213, "Full Name", true, 456456, "title", currentTime, "a8RzndjRoJ6SrwT1odfD")
+      assert.ok(testCheckoutContainsString(123, checkout));
+      assert.ok(testCheckoutContainsString("Full Name", checkout));
+      assert.ok(testCheckoutContainsString("title", checkout));
+      assert.ok(testCheckoutContainsString(currentTime.toLocaleDateString(), checkout));
+      assert.ok(testCheckoutContainsString("a8", checkout));
+    });
   </script>
 </head>
 

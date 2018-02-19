@@ -10,8 +10,8 @@ class Checkout {
   }
   
   containsString (queryString) {
-    var lowerCaseQueryString = queryString.toLowerCase();
-    return this._userId.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+    var lowerCaseQueryString = queryString.toString().toLowerCase();
+    return this._userId.toString().toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._userFullName.toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._bookTitle.toLowerCase().indexOf(lowerCaseQueryString) !== -1
         || this._checkoutDate.toLocaleDateString().toLowerCase().indexOf(lowerCaseQueryString) !== -1
