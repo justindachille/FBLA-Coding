@@ -318,3 +318,8 @@ a:active {
 	0% { opacity:0; }
 	100% { opacity:100%; }
 }
+
+.searchbox {
+  width: 800px;
+  margin: 0px auto;
+}

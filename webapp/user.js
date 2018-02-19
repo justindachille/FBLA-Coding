@@ -6,6 +6,15 @@ class User {
     this._id = id;
   }
 
+  containsString (queryString) {
+    var lowerCaseQueryString = queryString.toString().toLowerCase();
+    var teacherOrStudent = this._isTeacher ? "teacher" : "student";
+    return this._firstName.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || this._lastName.toLowerCase().indexOf(lowerCaseQueryString) !== -1
+        || teacherOrStudent.indexOf(lowerCaseQueryString) !== -1
+        || this._id.toString().toLowerCase().indexOf(lowerCaseQueryString) !== -1;
+  }
+  
   get fullName () {
     return this.firstName + ' ' + this.lastName;
   }

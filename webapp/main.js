@@ -116,7 +116,7 @@ window.addEventListener("DOMContentLoaded", function () {
       });
     }).then(function () {
       console.log("Transaction successfully committed!");
-      readUsers();
+      readAllUsers();
     }).catch(function (error) {
       console.log("Transaction failed: ", error);
     })
@@ -215,7 +215,16 @@ function makeReports(queryString) {
     });
 }
 
-function readUsers() {
+function searchUsers() {
+  var searchText = document.getElementById("userSearchInput").value;
+  readUsers(searchText);
+}
+
+function readAllUsers() {
+  readUsers("");
+}
+
+function readUsers(queryString) {
   db.collection(USER_COLLECTION).limit(USER_MAX_READ).get().then((querySnapshot) => {
     var userList = document.querySelector("#userList");
     userList.innerHTML = "";
@@ -226,7 +235,9 @@ function readUsers() {
     querySnapshot.forEach((doc) => {
       user = doc.data();
       var newUser = new User(user.firstName, user.lastName, user.isTeacher, doc.id);
-      table.appendChild(makeUserHtml(newUser));
+      if (newUser.containsString(queryString)) {
+        table.appendChild(makeUserHtml(newUser));
+      }
     });
   });
 }
@@ -366,7 +377,7 @@ function createUser() {
     .then(function (docRef) {
       console.log("user written");
     });
-  readUsers();
+  readAllUsers();
 }
 
 function createUserArgs(firstName, lastName) {
@@ -381,7 +392,7 @@ function createUserArgs(firstName, lastName) {
     .then(function (docRef) {
       console.log("user written");
     });
-  readUsers();
+  readAllUsers();
 }
 
 function createUser() {
@@ -396,7 +407,7 @@ function createUser() {
     .then(function (docRef) {
       console.log("user written");
     });
-  readUsers();
+  readAllUsers();
 }
 
 function createBookArgs(title, author, genre, ISBN, pubdate, pages) {
@@ -652,7 +663,7 @@ function makeUserHtml(user) {
     selectUser(user);
     onUserTextChanged();
     console.log(selectedUserId);
-    readUsers();
+    readAllUsers();
   };
   return row;
 }
@@ -845,7 +856,7 @@ function onUserTextChanged() {
   } else {
     disableUserButtons();
   }
-  readUsers();
+  readAllUsers();
 }
 
 // Controls the help tips for the book tab
@@ -890,20 +901,24 @@ function bookHelp(selectedObject) {
 function userHelp(selectedObject) {
   var userEditHelp = document.getElementById("userEditHelpTip");
   var userCreateHelp = document.getElementById("userCreateHelpTip");
+  var userSearchHelp = document.getElementById("userSearchHelpTip");
 
   userEditHelp.style.visibility = "hidden";
   userCreateHelp.style.visibility = "hidden";
-  
+  userSearchHelp.style.visibility = "hidden";
+
   if (selectedObject.id == "userEdit") {
     userEditHelp.style.visibility = "visible";
   }
-  
+
   if (selectedObject.id == "userCreate") {
     userCreateHelp.style.visibility = "visible";
   }
 
+  if (selectedObject.id == "userSearch") {
+    userSearchHelp.style.visibility = "visible";
+  }
 }
-
 
 function onBookTextChanged() {
   var bookTitleText = document.getElementById("bookTitle").value;
@@ -938,80 +953,3 @@ function disableBookButtons() {
   document.getElementById("createBookButton").className = "disabledButton";
   document.getElementById("deleteBookButton").className = "disabledButton";
 }
-
-function addedPost(post) {
-  var newUser = {}
-  newPost['username'] = post.username;
-  allUsers.push(newUser);
-  readPosts();
-}
-
-function changedPost(newPost) {
-  allusers.forEach(function (oldUser) {
-    if (oldUser.text == newPost.text) {
-      oldUser.username = newPost.username;
-    }
-  });
-  readPosts();
-}
-
-function removedPost(removedPost) {
-  var updatedList = [];
-  allUsers.forEach(function (post) {
-    if (post.text === removedPost.text) {} else {
-      updatedList.push(post);
-    }
-  });
-  allUsers = updatedList;
-  readPosts();
-}
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function listenForChanges() {
-  db.collection(USER_COLLECTION).onSnapshot(function (querySnapshot) {
-    querySnapshot.docChanges.forEach(function (change) {
-      console.log("change in ", change.type + " " + change.doc.data().text);
-      if (change.type === "added") {
-        addedPost(change.doc.data());
-      }
-      if (change.type === "modified") {
-        changedPost(change.doc.data());
-      }
-      if (change.type === "removed") {
-        removedPost(change.doc.data());
-      }
-    });
-  });
-}
-
-function addDays(date, days) {
-  var result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-}
-
-function parseDate(str) {
-  var mdy = str.split('/');
-  return new Date(mdy[2], mdy[0] - 1, mdy[1]);
-}
-
-function daydiff(first, second) {
-  return Math.round((second - first) / (1000 * 60 * 60 * 24));
-}
-
-function openTab(evt, tabName) {
-  var tabcontent = document.getElementsByClassName("tabcontent");
-  for (var i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  var tablinks = document.getElementsByClassName("tablinks");
-  for (var i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-document.getElementById("defaultOpen").click();

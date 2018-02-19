@@ -8,6 +8,7 @@
   <script src="book.js"></script>
   <script src="checkout.js"></script>
   <script src="data.json"></script>
+  <script src="utils.js"></script>
   <script src="main.js"></script>
 </head>
 
@@ -15,12 +16,10 @@
   <div>
     <span id="logo">Library</span>
   </div>
-  <div>
-    <h2 id="selectedUser">Selected user: </h2>
-  </div>
+  <h2 id="selectedUser">Selected user: </h2>
   <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'Books');readAllBooks()" id="defaultOpen">Books</button>
-    <button class="tablinks" onclick="openTab(event, 'Users');readUsers()">Users</button>
+    <button class="tablinks" onclick="openTab(event, 'Users');readAllUsers()">Users</button>
     <button class="tablinks" onclick="openTab(event, 'Reports');makeAllReports()">Reports</button>
   </div>
 
@@ -28,11 +27,21 @@
     <table>
       <tr>
         <td>
+          <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookSearch">
+            <div class="help-tip" id="bookSearchHelpTip">
+              <p>Search any field of the book</p>
+            </div>
+            <h2>Search Books</h2>
+            <div class="hidden"><input type="text" id="bookSearch" value="" placeholder="Search Books"></div>
+            <a onclick="searchBooks()" class="createButton">Search</a>
+          </div>
+        </td>
+        <td>
           <div class="selectorBox" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookEdit">
             <h2>Edit book</h2>
             <div class="help-tip" id="bookEditHelpTip">
               <p>Select a book to edit its attributes here</p>
-            </div>              
+            </div>
             <form id="editForm" onsubmit="return false">
               <div>Title: <input oninput="onBookTextChanged()" type="text" id="selectionTitle"></div>
               <div>Author: <input oninput="onBookTextChanged()" type="text" id="selectionAuthor"></div>
@@ -46,8 +55,8 @@
             <h2>Create book</h2>
             <div class="help-tip" id="bookCreateHelpTip">
               <p>Use this section to create a new book</p>
-            </div>             
-            <div class="hidden"><input type="text" id="bookTitle" oninput="onBookTextChanged()"  value="" size="30" maxlength="80" placeholder="Title"></div>
+            </div>
+            <div class="hidden"><input type="text" id="bookTitle" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Title"></div>
             <div class="hidden"><input type="text" id="bookAuthor" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Author"></div>
             <div class="hidden"><input type="text" id="bookGenre" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Genre"></div>
             <div class="hidden"><input type="text" id="bookISBN" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="ISBN"></div>
@@ -60,11 +69,11 @@
           <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookCheckout">
             <div class="help-tip" id="bookCheckoutHelpTip">
               <p id="bookCheckoutHelpText"></p>
-            </div>                
+            </div>
             <h2>Checkout</h2>
             <form id="checkoutForm" onsubmit="return false">
-              User Id: <input type="text" id="checkoutUserId"> <br> 
-              Selected Book: <div id="checkoutBookTitle"></div>
+              User Id: <input type="text" id="checkoutUserId"> <br> Selected Book:
+              <div id="checkoutBookTitle"></div>
               Copies available: <span id="checkoutCopies"></span> <br>
 
               <a class="createButton" id="checkoutButton" onclick="checkout()">Checkout</a>
@@ -72,34 +81,32 @@
             </form>
           </div>
         </td>
-        <td>
-          <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookSearch">
-            <div class="help-tip" id="bookSearchHelpTip">
-              <p>Search any field of the book</p>
-            </div>             
-            <h2>Search books</h2>
-            <div class="hidden"><input type="text" id="bookSearch" value="" placeholder="Search Books"></div>
-            <a onclick="searchBooks()" class="createButton">Search</a>
-          </div>
-        </td>
       </tr>
     </table>
     <div id="bookList" class="list"> </div>
   </div>
-  
+
   <div id="Users" class="tabcontent">
     <table>
       <tr>
         <td>
+          <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="userSearch">
+            <div class="help-tip" id="userSearchHelpTip">
+              <p>Search any field of a user</p>
+            </div>
+            <h2>Search Users</h2>
+            <div class="hidden"><input type="text" id="userSearchInput" value="" placeholder="Search Users"></div>
+            <a onclick="searchUsers()" class="createButton">Search</a>
+          </div>
+        </td>
+        <td>
           <div class="selectorBox" onmouseover="userHelp(this);" onmouseout="userHelp(this);" id="userEdit">
             <div class="help-tip" id="userEditHelpTip">
               <p id="bookCheckoutHelpText">Select a user to edit its attributes here</p>
-            </div>                
-            <h2>Edit User</h2>          
+            </div>
+            <h2>Edit User</h2>
             <form id="editForm" onsubmit="return false">
-              First name: <input type="text" id="selectionFirstName"> <br>
-              Last name: <input type="text" id="selectionLastName"> <br>
-              Teacher?: <input type="checkbox" id="selectionIsTeacher" <br>
+              First name: <input type="text" id="selectionFirstName"> <br> Last name: <input type="text" id="selectionLastName"> <br> Teacher?: <input type="checkbox" id="selectionIsTeacher" <br>
               <div id="selectionId"></div>
               <a id="editUserButton" onclick="readUsers()" class="createButton">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
             </form>
@@ -109,7 +116,7 @@
           <div class="inputTable" onmouseover="userHelp(this);" onmouseout="userHelp(this);" id="userCreate">
             <div class="help-tip" id="userCreateHelpTip">
               <p id="bookCheckoutHelpText">Use this to create a new user</p>
-            </div>               
+            </div>
             <h2> Create User</h2>
             <div><input type="text" id="firstName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
             <div><input type="text" id="lastName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
@@ -129,11 +136,11 @@
       <h2>Search reports</h2>
       <input type="text" id="reportSearch" value="" placeholder="Search Reports">
       <a onclick="searchReports()" class="createButton">Search</a>
-    </div>    
+    </div>
     <h2>Weekly Report</h2>
     <div id="checkoutList" class="list"> </div>
     <h2>Fine Report</h2>
-    <div id="fineList" class ="list"> </div>
+    <div id="fineList" class="list"> </div>
   </div>
 
   <script>
@@ -141,37 +148,20 @@
     var bookCreateHelp = document.getElementById("bookCreateHelpTip");
     var bookEditHelp = document.getElementById("bookEditHelpTip");
     var bookCheckoutHelp = document.getElementById("bookCheckoutHelpTip");
-    
+
     bookCreateHelp.style.visibility = "hidden";
     bookEditHelp.style.visibility = "hidden";
     bookCheckoutHelp.style.visibility = "hidden";
-    
+
     var userEditHelp = document.getElementById("userEditHelpTip");
     var userCreateHelp = document.getElementById("userCreateHelpTip");
+    var userSearchHelp = document.getElementById("userSearchHelpTip");
 
     userEditHelp.style.visibility = "hidden";
     userCreateHelp.style.visibility = "hidden";
+    userSearchHelp.style.visibility = "hidden";
+
   </script>
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -12,11 +12,13 @@
 <!--  <script src="main.js"></script>-->
 
   <script>
+    const { test } = QUnit;
+    
     function testBookContainsString(query, bookInput) {
       return bookInput.containsString(query);
     }
     
-    QUnit.test("book contains", function(assert) {
+    test("book contains", assert => {
       var currentTime = new Date();
 //    constructor (title, author, genre, ISBN, pubdate, pages, copies, id)
       var book = new Book("title", "author", "genre", 12325313123, currentTime, 500, 10, "a8RzndjRoJ6SrwT1odfD");
@@ -33,16 +35,9 @@
       return checkoutInput.containsString(query);
     }
     
-    QUnit.test("checkout contains", function(assert) {
+    test("checkout contains", assert => {
       var currentTime = new Date();
 //    constructor (userId, userFullName, userIsTeacher, bookId, bookTitle, checkoutDate, id) {   
-      /*     var lowerCaseQueryString = queryString.toString().toLowerCase();
-    return this._userId.toLowerCase().indexOf(lowerCaseQueryString) !== -1
-        || this._userFullName.toLowerCase().indexOf(lowerCaseQueryString) !== -1
-        || this._bookTitle.toLowerCase().indexOf(lowerCaseQueryString) !== -1
-        || this._checkoutDate.toLocaleDateString().toLowerCase().indexOf(lowerCaseQueryString) !== -1
-        || this._id.toLowerCase().indexOf(lowerCaseQueryString) !== -1;
-        */
       var checkout = new Checkout(123213, "Full Name", true, 456456, "title", currentTime, "a8RzndjRoJ6SrwT1odfD")
       assert.ok(testCheckoutContainsString(123, checkout));
       assert.ok(testCheckoutContainsString("Full Name", checkout));
