@@ -159,7 +159,7 @@ function makeAllReports() {
 }
 
 function searchReports() {
-  var queryString = document.getElementById("reportSearch").value;
+  var queryString = document.getElementById("reportSearchInput").value;
   makeReports(queryString);
 }
 
@@ -243,7 +243,7 @@ function readUsers(queryString) {
 }
 
 function searchBooks() {
-  var searchText = document.getElementById("bookSearch").value;
+  var searchText = document.getElementById("bookSearchInput").value;
   readBooks(searchText);
 }
 
@@ -265,11 +265,11 @@ function readBooks(queryString) {
       //constructor (title, author, genre, ISBN, pubdate, pages, copies, id)
       var newBook = new Book(book.title, book.author, book.genre, book.ISBN, book.pubdate, book.pages, book.copies, doc.id);
       if (newBook.containsString(queryString)) {
+        readCount++;
         if (readCount >= BOOK_MAX_READ) {
           return;
         }
         table.appendChild(makeBookHtml(newBook));
-        readCount++;
       }
     });
   });
@@ -871,13 +871,10 @@ function bookHelp(selectedObject) {
   bookCheckoutHelp.style.visibility = "hidden";
   bookSearchHelp.style.visibility = "hidden";
   if (selectedObject.id == "bookCreate") {
-    console.log("this id: " + selectedObject.id + " is visible");
     bookCreateHelp.style.visibility = "visible";
-    //      $('#bookCreateHelpTip').css('visibility','visible').hide().fadeIn("slow");
   }
 
   if (selectedObject.id == "bookEdit") {
-    console.log("this id: " + selectedObject.id + " is visible");
     bookEditHelp.style.visibility = "visible";
   }
 
@@ -920,6 +917,16 @@ function userHelp(selectedObject) {
   }
 }
 
+function reportHelp(selectedObject) {
+  var reportSearchHelp = document.getElementById("reportSearchHelpTip");
+
+  reportSearchHelp.style.visibility = "hidden";
+
+  if (selectedObject.id == "reportSearch") {
+    reportSearchHelp.style.visibility = "visible";
+  }
+}
+
 function onBookTextChanged() {
   var bookTitleText = document.getElementById("bookTitle").value;
   var bookAuthorText = document.getElementById("bookAuthor").value;
@@ -953,3 +960,17 @@ function disableBookButtons() {
   document.getElementById("createBookButton").className = "disabledButton";
   document.getElementById("deleteBookButton").className = "disabledButton";
 }
+
+function openTab(evt, tabName) {
+  var tabcontent = document.getElementsByClassName("tabcontent");
+  for (var i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  var tablinks = document.getElementsByClassName("tablinks");
+  for (var i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+//document.getElementById("defaultOpen").click();

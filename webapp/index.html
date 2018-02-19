@@ -24,18 +24,25 @@
   </div>
 
   <div id="Books" class="tabcontent">
-    <table>
-      <tr>
-        <td>
-          <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookSearch">
+    <div class="searchBox" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookSearch">
+      <table>
+        <tr>
+          <td>
+            <div class="hidden"><input class="searchTextBox" type="text" id="bookSearchInput" value="" placeholder="Search Books"></div>
+          </td>
+          <td>
+            <a onclick="searchBooks()" class="createButton">Search</a>
+          </td>
+          <td>
             <div class="help-tip" id="bookSearchHelpTip">
               <p>Search any field of the book</p>
             </div>
-            <h2>Search Books</h2>
-            <div class="hidden"><input type="text" id="bookSearch" value="" placeholder="Search Books"></div>
-            <a onclick="searchBooks()" class="createButton">Search</a>
-          </div>
-        </td>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <table>
+      <tr>
         <td>
           <div class="selectorBox" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="bookEdit">
             <h2>Edit book</h2>
@@ -87,18 +94,25 @@
   </div>
 
   <div id="Users" class="tabcontent">
+    <div class="searchBox" onmouseover="userHelp(this);" onmouseout="userHelp(this);" id="userSearch">
+      <table>
+        <tr>
+          <td>
+            <div class="hidden"><input class="searchTextBox" type="text" id="userSearchInput" value="" placeholder="Search Users"></div>
+          </td>
+          <td>
+            <a onclick="searchUsers()" class="createButton">Search</a>
+          </td>
+          <td>
+            <div class="help-tip" id="userSearchHelpTip">
+              <p>Search any field of the user</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
     <table>
       <tr>
-        <td>
-          <div class="inputTable" onmouseover="bookHelp(this);" onmouseout="bookHelp(this);" id="userSearch">
-            <div class="help-tip" id="userSearchHelpTip">
-              <p>Search any field of a user</p>
-            </div>
-            <h2>Search Users</h2>
-            <div class="hidden"><input type="text" id="userSearchInput" value="" placeholder="Search Users"></div>
-            <a onclick="searchUsers()" class="createButton">Search</a>
-          </div>
-        </td>
         <td>
           <div class="selectorBox" onmouseover="userHelp(this);" onmouseout="userHelp(this);" id="userEdit">
             <div class="help-tip" id="userEditHelpTip">
@@ -132,10 +146,22 @@
   </div>
 
   <div id="Reports" class="tabcontent">
-    <div class="inputTable">
-      <h2>Search reports</h2>
-      <input type="text" id="reportSearch" value="" placeholder="Search Reports">
-      <a onclick="searchReports()" class="createButton">Search</a>
+    <div class="searchBox" onmouseover="reportHelp(this);" onmouseout="reportHelp(this);" id="reportSearch">
+      <table>
+        <tr>
+          <td>
+            <div class="hidden"><input class="searchTextBox" type="text" id="reportSearchInput" value="" placeholder="Search Reports"></div>
+          </td>
+          <td>
+            <a onclick="searchReports()" class="createButton">Search</a>
+          </td>
+          <td>
+            <div class="help-tip" id="reportSearchHelpTip">
+              <p>Search any field of the reports</p>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
     <h2>Weekly Report</h2>
     <div id="checkoutList" class="list"> </div>

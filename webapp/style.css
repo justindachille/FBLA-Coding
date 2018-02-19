@@ -250,6 +250,7 @@ a:active {
 	font-size: 14px;
 	line-height: 26px;
 	cursor: default;
+  z-index: 50;
 }
 
 .help-tip:before{
@@ -280,6 +281,7 @@ a:active {
 	color: #FFF;
 	font-size: 13px;
 	line-height: 1.4;
+  z-index: 50;
 }
 
 .help-tip p:before{
@@ -320,6 +322,13 @@ a:active {
 }
 
 .searchbox {
-  width: 800px;
+  float: center;
+  position: relative;
+  width: 400px;
   margin: 0px auto;
+}
+
+.searchTextBox {
+  width: 400px;
+  height: 40px;
 }

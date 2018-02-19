@@ -8,6 +8,7 @@
   <script src="https://code.jquery.com/qunit/qunit-2.5.0.js"></script>
   <script src="book.js"></script>
   <script src="checkout.js"></script>
+  <script src="utils.js"></script>
 
 <!--  <script src="main.js"></script>-->
 
@@ -19,14 +20,13 @@
     }
     
     test("book contains", assert => {
-      var currentTime = new Date();
 //    constructor (title, author, genre, ISBN, pubdate, pages, copies, id)
-      var book = new Book("title", "author", "genre", 12325313123, currentTime, 500, 10, "a8RzndjRoJ6SrwT1odfD");
+      var book = new Book("title", "author", "genre", 12325313123, "February 2014", 500, 10, "a8RzndjRoJ6SrwT1odfD");
       assert.ok(testBookContainsString("title", book));
       assert.ok(testBookContainsString("author", book));
       assert.ok(testBookContainsString("genre", book));
       assert.ok(testBookContainsString(123, book));
-      assert.ok(testBookContainsString(currentTime.toLocaleDateString(), book));
+      assert.ok(testBookContainsString("February", book));
       assert.ok(testBookContainsString(500, book));
       assert.notOk(testBookContainsString("fail", book));
     });
@@ -44,6 +44,15 @@
       assert.ok(testCheckoutContainsString("title", checkout));
       assert.ok(testCheckoutContainsString(currentTime.toLocaleDateString(), checkout));
       assert.ok(testCheckoutContainsString("a8", checkout));
+    });
+
+    test("capitalizeFirstLetter", assert => {
+      assert.equal(capitalizeFirstLetter("yeti"), "Yeti");
+      assert.notEqual(capitalizeFirstLetter("boon"), "boon");
+    });
+
+    test("addDays", assert => {
+      assert.equal(addDays(new Date("10/22/1993"), 1).toLocaleDateString(), "10/23/1993");
     });
   </script>
 </head>
