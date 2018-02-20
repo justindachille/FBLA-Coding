@@ -3,6 +3,7 @@ Library is a fully cloud backed asyncronus realtime database backed by Cloud Fir
 
 # Features
 * Realtime cloud database
+* Universal search
 * Fully editable
 * Import book and user data through JSON
 * Generate book and fine reports
@@ -11,11 +12,14 @@ Library is a fully cloud backed asyncronus realtime database backed by Cloud Fir
 # Interface
 Library is designed mainly around a horizontal table view, which allows the user to quickly and seamlessly switch for what they need at a given time. Each tab is broken down into a panel of I/O, and the resultant relevant information synced from the database. 
 
+### Universal search
+Each tab contains a search box which allows the user to filter the results on any field. This saves the user steps because instead of having to manually input which field they are looking for, they can just universally search throughout each field. 
+
 ### Interactive Help
 Library offers an extensive help system based on the current user's desires with dynamic help tips to guide the user to their destination. For example, if a user is not selected before they navigated to checkout, the help tip will automatically update to alert the user.
 
 # Testing
-Library is equipped with QUnit tests that will allow the user to test various parts of the Library framework individually, and an integration test to make sure everything works together
+Library is equipped with QUnit tests that will allow the user to test various parts of the Library framework individually. These tests are housed under tests.html and are customizable to the user's needs.
 
 # Hardware Architecture
 The backend processing system for this database is centralized to a Cloud Firestore location, with all of the data automatically backed up and synced to the central database. 

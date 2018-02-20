@@ -105,7 +105,6 @@ window.addEventListener("DOMContentLoaded", function () {
         if (!userDoc.exists) {
           throw "Document does not exist!"
         }
-        //          var user = userDoc.data();
         transaction.update(
           userDocRef, {
             firstName: newFirstName,
@@ -137,7 +136,6 @@ window.addEventListener("DOMContentLoaded", function () {
         if (!bookDoc.exists) {
           throw "Document does not exist!"
         }
-        //          var user = userDoc.data();
         transaction.update(
           bookDocRef, {
             title: newTitle,
@@ -165,7 +163,6 @@ function searchReports() {
 
 function makeReports(queryString) {
   var checkoutsRef = db.collection(CHECKOUT_COLLECTION);
-  //    var dueDate = addDays(new Date(), -CHECKOUT_PERIOD);
   checkoutsRef
     .where("checkinDate", "==", "null")
     .get()
@@ -210,7 +207,6 @@ function makeReports(queryString) {
             fineTable.appendChild(makeFineHtml(checkout));
           }
         }
-        //        table.appendChild(makeCheckoutHtml(newCheckout));
       });
     });
 }
@@ -292,6 +288,13 @@ function selectBook(book) {
   document.getElementById("selectionCopies").value = book.copies;
   document.getElementById("checkoutBookTitle").innerHTML = book.title;
   document.getElementById("checkoutUserId").value = selectedUserId;
+  if (!selectedUser) {
+    document.getElementById("checkoutButton").className = "disabledButton";
+    document.getElementById("checkoutButton").disabled = true;
+    document.getElementById("checkinButton").className = "disabledButton";
+    document.getElementById("checkinButton").disabled = true;
+    return;
+  }
   var checkoutsRef = db.collection(CHECKOUT_COLLECTION);
   // Get number of books checked out by user
   checkoutsRef
@@ -301,8 +304,6 @@ function selectBook(book) {
     .then(function (querySnapshot) {
       var numBooksCheckedOut = querySnapshot.docs.length;
       console.log("numBooksCheckedOut: " + numBooksCheckedOut);
-      document.getElementById("checkinButton").className = "createButton";
-      document.getElementById("checkinButton").disabled = false;
       if (selectedUser.isTeacher) {
         if (numBooksCheckedOut >= MAX_TEACHER_CHECKOUTS) {
           document.getElementById("checkoutButton").className = "disabledButton";
@@ -336,7 +337,7 @@ function selectBook(book) {
             document.getElementById("checkoutButton").className = "disabledButton";
             document.getElementById("checkoutButton").disabled = true;
           } else {
-            document.getElementById("checkoutButton").className = "createButton";
+            document.getElementById("checkoutButton").className = "enableButton";
             document.getElementById("checkoutButton").disabled = false;
           }
         });
@@ -358,7 +359,7 @@ function selectBook(book) {
             document.getElementById("checkinButton").disabled = true;
             console.log("disabled: " + querySnapshot.docs.length);
           } else {
-            document.getElementById("checkinButton").className = "createButton";
+            document.getElementById("checkinButton").className = "enableButton";
             document.getElementById("checkinButton").disabled = false;
           }
         });
@@ -427,7 +428,6 @@ function createBookArgs(title, author, genre, ISBN, pubdate, pages) {
     .then(function (docRef) {
       console.log("book written");
     });
-  //    readBooks();
 }
 
 function createBook() {
@@ -509,13 +509,11 @@ function makeFineHtml(checkout) {
   // Check if user is teacher or student to calculate period
   if (checkout.userIsTeacher) {
     var checkinDate = addDays(checkout.checkoutDate, TEACHER_CHECKOUT_PERIOD);
-    //    checkinDate.setDate(checkout.checkoutDate + CHECKOUT_PERIOD);
     var timeDifference = checkinDate - (new Date());
     var daysOverdue = Math.abs(Math.floor(timeDifference / MILLIS_PER_DAY));
     date.innerHTML = daysOverdue;
   } else {
     var checkinDate = addDays(checkout.checkoutDate, STUDENT_CHECKOUT_PERIOD);
-    //    checkinDate.setDate(checkout.checkoutDate + CHECKOUT_PERIOD);
     var timeDifference = checkinDate - (new Date());
     var daysOverdue = Math.abs(Math.floor(timeDifference / MILLIS_PER_DAY));
     date.innerHTML = daysOverdue;
@@ -579,14 +577,12 @@ function makeCheckoutHtml(checkout) {
     var date = document.createElement("td");
     date.className = "date";
     var checkinDate = addDays(checkout.checkoutDate, TEACHER_CHECKOUT_PERIOD);
-    //    checkinDate.setDate(checkout.checkoutDate + CHECKOUT_PERIOD);
     var timeDifference = checkinDate - (new Date());
     date.innerHTML = Math.floor(timeDifference / MILLIS_PER_DAY);
   } else {
     var date = document.createElement("td");
     date.className = "date";
     var checkinDate = addDays(checkout.checkoutDate, STUDENT_CHECKOUT_PERIOD);
-    //    checkinDate.setDate(checkout.checkoutDate + CHECKOUT_PERIOD);
     var timeDifference = checkinDate - (new Date());
     date.innerHTML = Math.floor(timeDifference / MILLIS_PER_DAY);
   }
@@ -942,7 +938,7 @@ function onBookTextChanged() {
 }
 
 function enableUserButtons() {
-  document.getElementById("createUserButton").className = "createButton";
+  document.getElementById("createUserButton").className = "enableButton";
   document.getElementById("deleteUserButton").className = "deleteButton";
 }
 
@@ -952,7 +948,7 @@ function disableUserButtons() {
 }
 
 function enableBookButtons() {
-  document.getElementById("createBookButton").className = "createButton";
+  document.getElementById("createBookButton").className = "enableButton";
   document.getElementById("deleteBookButton").className = "deleteButton";
 }
 
@@ -973,4 +969,3 @@ function openTab(evt, tabName) {
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
 }
-//document.getElementById("defaultOpen").click();

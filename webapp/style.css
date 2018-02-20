@@ -41,7 +41,6 @@ input {
 }
 
 #logo:after {
-  /*background: url(https://subtlepatterns.com/patterns/crossed_stripes.png) repeat;*/
   background-image: -webkit-linear-gradient(left top, transparent 0%, transparent 25%, #500 25%, #500 50%, transparent 50%, transparent 75%, #500 75%);
   background-size: 4px 4px;
   -webkit-background-clip: text;
@@ -218,7 +217,7 @@ a:active {
   transition: 0.1s ease;
 }
 
-.createButton {
+.enableButton {
   background: hsl(104, 51%, 62%);
 }
 

@@ -31,7 +31,7 @@
             <div class="hidden"><input class="searchTextBox" type="text" id="bookSearchInput" value="" placeholder="Search Books"></div>
           </td>
           <td>
-            <a onclick="searchBooks()" class="createButton">Search</a>
+            <a onclick="searchBooks()" class="enableButton">Search</a>
           </td>
           <td>
             <div class="help-tip" id="bookSearchHelpTip">
@@ -53,7 +53,7 @@
               <div>Title: <input oninput="onBookTextChanged()" type="text" id="selectionTitle"></div>
               <div>Author: <input oninput="onBookTextChanged()" type="text" id="selectionAuthor"></div>
               Copies: <input oninput="onBookTextChanged()" type="text" id="selectionCopies"> <br>
-              <a class="createButton" id="editBookButton" onclick="readUsers()">Edit</a>
+              <a class="enableButton" id="editBookButton" onclick="readUsers()">Edit</a>
             </form>
           </div>
         </td>
@@ -68,7 +68,7 @@
             <div class="hidden"><input type="text" id="bookGenre" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Genre"></div>
             <div class="hidden"><input type="text" id="bookISBN" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="ISBN"></div>
             <div class="hidden"><input type="text" id="bookCopies" oninput="onBookTextChanged()" value="" size="30" maxlength="80" placeholder="Copies"></div>
-            <a id="createBookButton" class="createButton" onclick="createBook()">Create</a>
+            <a id="createBookButton" class="enableButton" onclick="createBook()">Create</a>
             <a id="deleteBookButton" class="deleteButton" onclick="deleteBook()">Delete</a>
           </div>
         </td>
@@ -83,8 +83,8 @@
               <div id="checkoutBookTitle"></div>
               Copies available: <span id="checkoutCopies"></span> <br>
 
-              <a class="createButton" id="checkoutButton" onclick="checkout()">Checkout</a>
-              <a class="createButton" id="checkinButton" onclick="checkin()">Checkin</a>
+              <a class="enableButton" id="checkoutButton" onclick="checkout()">Checkout</a>
+              <a class="enableButton" id="checkinButton" onclick="checkin()">Checkin</a>
             </form>
           </div>
         </td>
@@ -101,7 +101,7 @@
             <div class="hidden"><input class="searchTextBox" type="text" id="userSearchInput" value="" placeholder="Search Users"></div>
           </td>
           <td>
-            <a onclick="searchUsers()" class="createButton">Search</a>
+            <a onclick="searchUsers()" class="enableButton">Search</a>
           </td>
           <td>
             <div class="help-tip" id="userSearchHelpTip">
@@ -122,7 +122,7 @@
             <form id="editForm" onsubmit="return false">
               First name: <input type="text" id="selectionFirstName"> <br> Last name: <input type="text" id="selectionLastName"> <br> Teacher?: <input type="checkbox" id="selectionIsTeacher" <br>
               <div id="selectionId"></div>
-              <a id="editUserButton" onclick="readUsers()" class="createButton">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
+              <a id="editUserButton" onclick="readUsers()" class="enableButton">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
             </form>
           </div>
         </td>
@@ -134,8 +134,8 @@
             <h2> Create User</h2>
             <div><input type="text" id="firstName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="First name"></div>
             <div><input type="text" id="lastName" oninput="onUserTextChanged()" value="" size="30" maxlength="80" placeholder="Last name"></div>
-            <div>Teacher?<input type="checkbox" id="isTeacher" oninput="onUserTextChanged()" value="" placeholder="Teacher?"></div>
-            <a id="createUserButton" class="createButton" onclick="createUser()">Create</a>
+            <div>Teacher?:<input type="checkbox" id="isTeacher" oninput="onUserTextChanged()" value="" placeholder="Teacher?"></div>
+            <a id="createUserButton" class="enableButton" onclick="createUser()">Create</a>
             <a id="deleteUserButton" class="deleteButton" onclick="deleteUser()">Delete</a>
             <button onclick="readUsers()">Refresh</button>
           </div>
@@ -153,7 +153,7 @@
             <div class="hidden"><input class="searchTextBox" type="text" id="reportSearchInput" value="" placeholder="Search Reports"></div>
           </td>
           <td>
-            <a onclick="searchReports()" class="createButton">Search</a>
+            <a onclick="searchReports()" class="enableButton">Search</a>
           </td>
           <td>
             <div class="help-tip" id="reportSearchHelpTip">
