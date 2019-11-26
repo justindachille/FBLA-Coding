@@ -187,26 +187,19 @@ function makeReports(queryString) {
         if (!newCheckout.containsString(queryString)) {
           return;
         }
+        var dueDate = addDays(checkout.checkoutDate, checkout.userIsTeacher ? TEACHER_CHECKOUT_PERIOD : STUDENT_CHECKOUT_PERIOD);
+        if (checkout.userIsTeacher) 
         // If user is teacher, use teacher checkout period and fine, else use student checkout period and fine
-        if (checkout.userIsTeacher) {
-          var dueDate = addDays(new Date(), TEACHER_CHECKOUT_PERIOD);
-          if (checkout.checkoutDate < dueDate) {
-            weeklyTable.appendChild(makeCheckoutHtml(checkout));
-          } else {
-            fineTable.appendChild(makeFineHtml(checkout));
-          }
-        } else {
-          var dueDate = addDays(new Date(), STUDENT_CHECKOUT_PERIOD);
           console.log("dueDate: " + dueDate);
           console.log("checkoutDate: " + checkout.checkoutDate);
-          if (checkout.checkoutDate < dueDate) {
+          if (new Date() < dueDate) {
             console.log("less than");
             weeklyTable.appendChild(makeCheckoutHtml(checkout));
           } else {
             console.log("greater than");
             fineTable.appendChild(makeFineHtml(checkout));
           }
-        }
+//        }
       });
     });
 }
